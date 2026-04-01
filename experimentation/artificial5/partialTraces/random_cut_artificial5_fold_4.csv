@@ -1,0 +1,178 @@
+collab:elemType,org:group,concept:name,collab:participant,time:timestamp,case:concept:name,msgInstanceId,msgType,collab:toParticipant,msgFlow,collab:fromParticipant,eventType,collab:elemType_collab:participant,selected_prefix_length
+task,PartyA,Activity A,PartyA,2021-06-23 07:01:29,case_109,,,,,,,task_PartyA,17
+SendTask,PartyB,Activity AA,PartyB,2021-06-23 07:01:36,case_109,m4_115,send,PartyC,m4,,,SendTask_PartyB,17
+task,PartyB,Activity BB,PartyB,2021-06-23 07:01:40,case_109,,,,,,,task_PartyB,17
+SendTask,PartyB,Activity CC,PartyB,2021-06-23 07:01:43,case_109,m1_114,send,PartyA,m1,,,SendTask_PartyB,17
+ReceiveTask,PartyC,Start,PartyC,2021-06-23 07:01:48,case_109,m4_115,receive,,m4,PartyB,start,ReceiveTask_PartyC,17
+task,PartyB,Activity FF,PartyB,2021-06-23 07:01:53,case_109,,,,,,,task_PartyB,17
+SendTask,PartyB,Activity EE,PartyB,2021-06-23 07:02:00,case_109,m2_112,send,PartyA,m2,,,SendTask_PartyB,17
+ReceiveTask,PartyA,Activity D,PartyA,2021-06-23 07:02:09,case_109,m2_112,receive,,m2,PartyB,,ReceiveTask_PartyA,17
+task,PartyB,Activity G,PartyB,2021-06-23 07:02:20,case_109,,,,,,,task_PartyB,17
+task,PartyA,Activity B,PartyA,2021-06-23 07:02:24,case_109,,,,,,,task_PartyA,17
+task,PartyC,Activity ZA,PartyC,2021-06-23 07:02:37,case_109,,,,,,,task_PartyC,17
+SendTask,PartyA,Activity E,PartyA,2021-06-23 07:02:39,case_109,m3_113,send,PartyB,m3,,,SendTask_PartyA,17
+SendTask,PartyC,Activity DZ,PartyC,2021-06-23 07:02:44,case_109,m5_116,send,PartyB,m5,,,SendTask_PartyC,17
+task,PartyC,Activity CZ,PartyC,2021-06-23 07:02:49,case_109,,,,,,,task_PartyC,17
+ReceiveTask,PartyB,Activity H,PartyB,2021-06-23 07:02:49,case_109,m5_116,receive,,m5,PartyC,,ReceiveTask_PartyB,17
+ReceiveTask,PartyA,Activity F,PartyA,2021-06-23 07:03:10,case_109,m1_114,receive,,m1,PartyB,,ReceiveTask_PartyA,17
+task,PartyC,Activity BZ,PartyC,2021-06-23 07:03:26,case_109,,,,,,,task_PartyC,17
+task,PartyA,Activity A,PartyA,2021-06-23 06:21:52,case_14,,,,,,,task_PartyA,17
+SendTask,PartyB,Activity AA,PartyB,2021-06-23 06:21:56,case_14,m4_13,send,PartyC,m4,,,SendTask_PartyB,17
+task,PartyB,Activity BB,PartyB,2021-06-23 06:21:56,case_14,,,,,,,task_PartyB,17
+ReceiveTask,PartyC,Start,PartyC,2021-06-23 06:22:03,case_14,m4_13,receive,,m4,PartyB,start,ReceiveTask_PartyC,17
+task,PartyC,Activity ZA,PartyC,2021-06-23 06:22:10,case_14,,,,,,,task_PartyC,17
+task,PartyC,Activity CZ,PartyC,2021-06-23 06:22:26,case_14,,,,,,,task_PartyC,17
+SendTask,PartyB,Activity CC,PartyB,2021-06-23 06:22:28,case_14,m1_12,send,PartyA,m1,,,SendTask_PartyB,17
+SendTask,PartyC,Activity DZ,PartyC,2021-06-23 06:22:35,case_14,m5_14,send,PartyB,m5,,,SendTask_PartyC,17
+task,PartyC,Activity BZ,PartyC,2021-06-23 06:22:47,case_14,,,,,,,task_PartyC,17
+ReceiveTask,PartyB,Activity H,PartyB,2021-06-23 06:22:50,case_14,m5_14,receive,,m5,PartyC,,ReceiveTask_PartyB,17
+task,PartyB,Activity FF,PartyB,2021-06-23 06:22:53,case_14,,,,,,,task_PartyB,17
+task,PartyB,Activity G,PartyB,2021-06-23 06:22:56,case_14,,,,,,,task_PartyB,17
+SendTask,PartyB,Activity EE,PartyB,2021-06-23 06:22:57,case_14,m2_10,send,PartyA,m2,,,SendTask_PartyB,17
+ReceiveTask,PartyA,Activity D,PartyA,2021-06-23 06:22:57,case_14,m2_10,receive,,m2,PartyB,,ReceiveTask_PartyA,17
+task,PartyB,Activity DD,PartyB,2021-06-23 06:23:00,case_14,,,,,,,task_PartyB,17
+task,PartyA,Activity B,PartyA,2021-06-23 06:23:20,case_14,,,,,,,task_PartyA,17
+task,PartyB,Activity I,PartyB,2021-06-23 06:23:21,case_14,,,,,,,task_PartyB,17
+SendTask,PartyB,Activity AA,PartyB,2021-06-23 07:27:42,case_169,m4_177,send,PartyC,m4,,,SendTask_PartyB,10
+task,PartyA,Activity A,PartyA,2021-06-23 07:27:50,case_169,,,,,,,task_PartyA,10
+task,PartyB,Activity BB,PartyB,2021-06-23 07:27:59,case_169,,,,,,,task_PartyB,10
+ReceiveTask,PartyC,Start,PartyC,2021-06-23 07:28:06,case_169,m4_177,receive,,m4,PartyB,start,ReceiveTask_PartyC,10
+task,PartyC,Activity ZA,PartyC,2021-06-23 07:28:11,case_169,,,,,,,task_PartyC,10
+SendTask,PartyB,Activity CC,PartyB,2021-06-23 07:28:17,case_169,m1_176,send,PartyA,m1,,,SendTask_PartyB,10
+task,PartyB,Activity FF,PartyB,2021-06-23 07:28:18,case_169,,,,,,,task_PartyB,10
+task,PartyB,Activity G,PartyB,2021-06-23 07:28:26,case_169,,,,,,,task_PartyB,10
+SendTask,PartyC,Activity DZ,PartyC,2021-06-23 07:28:29,case_169,m5_178,send,PartyB,m5,,,SendTask_PartyC,10
+ReceiveTask,PartyB,Activity H,PartyB,2021-06-23 07:28:34,case_169,m5_178,receive,,m5,PartyC,,ReceiveTask_PartyB,10
+SendTask,PartyB,Activity AA,PartyB,2021-06-23 07:50:08,case_219,m4_231,send,PartyC,m4,,,SendTask_PartyB,8
+task,PartyA,Activity A,PartyA,2021-06-23 07:50:08,case_219,,,,,,,task_PartyA,8
+task,PartyB,Activity BB,PartyB,2021-06-23 07:50:22,case_219,,,,,,,task_PartyB,8
+task,PartyA,Activity C,PartyA,2021-06-23 07:50:31,case_219,,,,,,,task_PartyA,8
+SendTask,PartyB,Activity CC,PartyB,2021-06-23 07:50:36,case_219,m1_230,send,PartyA,m1,,,SendTask_PartyB,8
+task,PartyB,Activity FF,PartyB,2021-06-23 07:50:51,case_219,,,,,,,task_PartyB,8
+task,PartyB,Activity G,PartyB,2021-06-23 07:50:54,case_219,,,,,,,task_PartyB,8
+ReceiveTask,PartyC,Start,PartyC,2021-06-23 07:51:08,case_219,m4_231,receive,,m4,PartyB,start,ReceiveTask_PartyC,8
+SendTask,PartyB,Activity AA,PartyB,2021-06-23 07:54:51,case_229,m4_243,send,PartyC,m4,,,SendTask_PartyB,7
+task,PartyB,Activity BB,PartyB,2021-06-23 07:54:55,case_229,,,,,,,task_PartyB,7
+task,PartyA,Activity A,PartyA,2021-06-23 07:55:06,case_229,,,,,,,task_PartyA,7
+ReceiveTask,PartyC,Start,PartyC,2021-06-23 07:55:17,case_229,m4_243,receive,,m4,PartyB,start,ReceiveTask_PartyC,7
+SendTask,PartyB,Activity CC,PartyB,2021-06-23 07:55:22,case_229,m1_242,send,PartyA,m1,,,SendTask_PartyB,7
+task,PartyC,Activity ZA,PartyC,2021-06-23 07:55:31,case_229,,,,,,,task_PartyC,7
+SendTask,PartyC,Activity DZ,PartyC,2021-06-23 07:55:36,case_229,m5_244,send,PartyB,m5,,,SendTask_PartyC,7
+task,PartyA,Activity A,PartyA,2021-06-23 08:08:01,case_259,,,,,,,task_PartyA,6
+SendTask,PartyB,Activity AA,PartyB,2021-06-23 08:08:05,case_259,m4_274,send,PartyC,m4,,,SendTask_PartyB,6
+ReceiveTask,PartyC,Start,PartyC,2021-06-23 08:08:10,case_259,m4_274,receive,,m4,PartyB,start,ReceiveTask_PartyC,6
+task,PartyB,Activity BB,PartyB,2021-06-23 08:08:13,case_259,,,,,,,task_PartyB,6
+SendTask,PartyB,Activity CC,PartyB,2021-06-23 08:08:17,case_259,m1_273,send,PartyA,m1,,,SendTask_PartyB,6
+task,PartyC,Activity ZA,PartyC,2021-06-23 08:08:30,case_259,,,,,,,task_PartyC,6
+task,PartyA,Activity A,PartyA,2021-06-23 08:10:00,case_264,,,,,,,task_PartyA,4
+SendTask,PartyB,Activity AA,PartyB,2021-06-23 08:10:01,case_264,m4_279,send,PartyC,m4,,,SendTask_PartyB,4
+task,PartyB,Activity BB,PartyB,2021-06-23 08:10:02,case_264,,,,,,,task_PartyB,4
+ReceiveTask,PartyC,Start,PartyC,2021-06-23 08:10:08,case_264,m4_279,receive,,m4,PartyB,start,ReceiveTask_PartyC,4
+SendTask,PartyB,Activity AA,PartyB,2021-06-23 08:29:56,case_314,m4_331,send,PartyC,m4,,,SendTask_PartyB,9
+task,PartyA,Activity A,PartyA,2021-06-23 08:30:02,case_314,,,,,,,task_PartyA,9
+task,PartyB,Activity BB,PartyB,2021-06-23 08:30:13,case_314,,,,,,,task_PartyB,9
+SendTask,PartyB,Activity CC,PartyB,2021-06-23 08:30:17,case_314,m1_330,send,PartyA,m1,,,SendTask_PartyB,9
+ReceiveTask,PartyC,Start,PartyC,2021-06-23 08:30:23,case_314,m4_331,receive,,m4,PartyB,start,ReceiveTask_PartyC,9
+SendTask,PartyB,Activity EE,PartyB,2021-06-23 08:30:27,case_314,m2_328,send,PartyA,m2,,,SendTask_PartyB,9
+task,PartyB,Activity FF,PartyB,2021-06-23 08:30:33,case_314,,,,,,,task_PartyB,9
+task,PartyC,Activity ZA,PartyC,2021-06-23 08:30:49,case_314,,,,,,,task_PartyC,9
+ReceiveTask,PartyA,Activity D,PartyA,2021-06-23 08:31:02,case_314,m2_328,receive,,m2,PartyB,,ReceiveTask_PartyA,9
+SendTask,PartyB,Activity AA,PartyB,2021-06-23 08:51:02,case_364,m4_384,send,PartyC,m4,,,SendTask_PartyB,5
+task,PartyB,Activity BB,PartyB,2021-06-23 08:51:06,case_364,,,,,,,task_PartyB,5
+SendTask,PartyB,Activity CC,PartyB,2021-06-23 08:51:12,case_364,m1_383,send,PartyA,m1,,,SendTask_PartyB,5
+ReceiveTask,PartyC,Start,PartyC,2021-06-23 08:51:19,case_364,m4_384,receive,,m4,PartyB,start,ReceiveTask_PartyC,5
+task,PartyA,Activity A,PartyA,2021-06-23 08:51:20,case_364,,,,,,,task_PartyA,5
+SendTask,PartyB,Activity AA,PartyB,2021-06-23 06:31:49,case_39,m4_39,send,PartyC,m4,,,SendTask_PartyB,2
+task,PartyB,Activity BB,PartyB,2021-06-23 06:31:58,case_39,,,,,,,task_PartyB,2
+task,PartyA,Activity A,PartyA,2021-06-23 09:09:28,case_409,,,,,,,task_PartyA,6
+SendTask,PartyB,Activity AA,PartyB,2021-06-23 09:09:32,case_409,m4_433,send,PartyC,m4,,,SendTask_PartyB,6
+task,PartyB,Activity BB,PartyB,2021-06-23 09:09:35,case_409,,,,,,,task_PartyB,6
+task,PartyA,Activity C,PartyA,2021-06-23 09:09:42,case_409,,,,,,,task_PartyA,6
+ReceiveTask,PartyC,Start,PartyC,2021-06-23 09:09:53,case_409,m4_433,receive,,m4,PartyB,start,ReceiveTask_PartyC,6
+SendTask,PartyB,Activity CC,PartyB,2021-06-23 09:09:57,case_409,m1_432,send,PartyA,m1,,,SendTask_PartyB,6
+SendTask,PartyB,Activity AA,PartyB,2021-06-23 09:17:55,case_429,m4_453,send,PartyC,m4,,,SendTask_PartyB,11
+ReceiveTask,PartyC,Start,PartyC,2021-06-23 09:18:04,case_429,m4_453,receive,,m4,PartyB,start,ReceiveTask_PartyC,11
+task,PartyC,Activity ZA,PartyC,2021-06-23 09:18:12,case_429,,,,,,,task_PartyC,11
+task,PartyB,Activity BB,PartyB,2021-06-23 09:18:17,case_429,,,,,,,task_PartyB,11
+task,PartyA,Activity A,PartyA,2021-06-23 09:18:23,case_429,,,,,,,task_PartyA,11
+SendTask,PartyC,Activity DZ,PartyC,2021-06-23 09:18:40,case_429,m5_454,send,PartyB,m5,,,SendTask_PartyC,11
+task,PartyA,Activity C,PartyA,2021-06-23 09:18:47,case_429,,,,,,,task_PartyA,11
+task,PartyC,Activity CZ,PartyC,2021-06-23 09:18:55,case_429,,,,,,,task_PartyC,11
+SendTask,PartyB,Activity CC,PartyB,2021-06-23 09:18:58,case_429,m1_452,send,PartyA,m1,,,SendTask_PartyB,11
+task,PartyC,Activity BZ,PartyC,2021-06-23 09:19:08,case_429,,,,,,,task_PartyC,11
+task,PartyA,Activity B,PartyA,2021-06-23 09:19:16,case_429,,,,,,,task_PartyA,11
+task,PartyA,Activity A,PartyA,2021-06-23 09:19:57,case_434,,,,,,,task_PartyA,7
+SendTask,PartyB,Activity AA,PartyB,2021-06-23 09:20:02,case_434,m4_459,send,PartyC,m4,,,SendTask_PartyB,7
+task,PartyB,Activity BB,PartyB,2021-06-23 09:20:02,case_434,,,,,,,task_PartyB,7
+SendTask,PartyB,Activity CC,PartyB,2021-06-23 09:20:06,case_434,m1_458,send,PartyA,m1,,,SendTask_PartyB,7
+ReceiveTask,PartyC,Start,PartyC,2021-06-23 09:20:15,case_434,m4_459,receive,,m4,PartyB,start,ReceiveTask_PartyC,7
+task,PartyB,Activity FF,PartyB,2021-06-23 09:20:19,case_434,,,,,,,task_PartyB,7
+task,PartyC,Activity ZA,PartyC,2021-06-23 09:20:22,case_434,,,,,,,task_PartyC,7
+SendTask,PartyB,Activity AA,PartyB,2021-06-23 09:28:14,case_454,m4_479,send,PartyC,m4,,,SendTask_PartyB,4
+task,PartyB,Activity BB,PartyB,2021-06-23 09:28:15,case_454,,,,,,,task_PartyB,4
+ReceiveTask,PartyC,Start,PartyC,2021-06-23 09:28:20,case_454,m4_479,receive,,m4,PartyB,start,ReceiveTask_PartyC,4
+task,PartyA,Activity A,PartyA,2021-06-23 09:28:32,case_454,,,,,,,task_PartyA,4
+SendTask,PartyB,Activity AA,PartyB,2021-06-23 09:42:38,case_489,m4_516,send,PartyC,m4,,,SendTask_PartyB,16
+task,PartyB,Activity BB,PartyB,2021-06-23 09:42:50,case_489,,,,,,,task_PartyB,16
+SendTask,PartyB,Activity CC,PartyB,2021-06-23 09:42:58,case_489,m1_515,send,PartyA,m1,,,SendTask_PartyB,16
+ReceiveTask,PartyC,Start,PartyC,2021-06-23 09:43:11,case_489,m4_516,receive,,m4,PartyB,start,ReceiveTask_PartyC,16
+task,PartyC,Activity ZA,PartyC,2021-06-23 09:43:15,case_489,,,,,,,task_PartyC,16
+task,PartyC,Activity CZ,PartyC,2021-06-23 09:43:20,case_489,,,,,,,task_PartyC,16
+task,PartyA,Activity A,PartyA,2021-06-23 09:43:24,case_489,,,,,,,task_PartyA,16
+SendTask,PartyC,Activity DZ,PartyC,2021-06-23 09:43:34,case_489,m5_517,send,PartyB,m5,,,SendTask_PartyC,16
+task,PartyA,Activity C,PartyA,2021-06-23 09:43:39,case_489,,,,,,,task_PartyA,16
+ReceiveTask,PartyB,Activity H,PartyB,2021-06-23 09:43:50,case_489,m5_517,receive,,m5,PartyC,,ReceiveTask_PartyB,16
+SendTask,PartyB,Activity EE,PartyB,2021-06-23 09:43:56,case_489,m2_518,send,,m2,,,SendTask_PartyB,16
+task,PartyC,Activity BZ,PartyC,2021-06-23 09:44:09,case_489,,,,,,,task_PartyC,16
+task,PartyB,Activity G,PartyB,2021-06-23 09:44:10,case_489,,,,,,,task_PartyB,16
+task,PartyB,Activity FF,PartyB,2021-06-23 09:44:23,case_489,,,,,,,task_PartyB,16
+task,PartyA,Activity B,PartyA,2021-06-23 09:44:28,case_489,,,,,,,task_PartyA,16
+task,PartyB,Activity DD,PartyB,2021-06-23 09:44:32,case_489,,,,,,,task_PartyB,16
+task,PartyA,Activity A,PartyA,2021-06-23 06:36:00,case_49,,,,,,,task_PartyA,20
+task,PartyA,Activity C,PartyA,2021-06-23 06:36:01,case_49,,,,,,,task_PartyA,20
+SendTask,PartyB,Activity AA,PartyB,2021-06-23 06:36:04,case_49,m4_48,send,PartyC,m4,,,SendTask_PartyB,20
+task,PartyB,Activity BB,PartyB,2021-06-23 06:36:13,case_49,,,,,,,task_PartyB,20
+ReceiveTask,PartyC,Start,PartyC,2021-06-23 06:36:27,case_49,m4_48,receive,,m4,PartyB,start,ReceiveTask_PartyC,20
+task,PartyA,Activity B,PartyA,2021-06-23 06:36:34,case_49,,,,,,,task_PartyA,20
+SendTask,PartyB,Activity CC,PartyB,2021-06-23 06:36:38,case_49,m1_47,send,PartyA,m1,,,SendTask_PartyB,20
+SendTask,PartyA,Activity E,PartyA,2021-06-23 06:36:40,case_49,m3_46,send,PartyB,m3,,,SendTask_PartyA,20
+SendTask,PartyB,Activity EE,PartyB,2021-06-23 06:36:52,case_49,m2_49,send,,m2,,,SendTask_PartyB,20
+task,PartyC,Activity ZA,PartyC,2021-06-23 06:37:09,case_49,,,,,,,task_PartyC,20
+SendTask,PartyC,Activity DZ,PartyC,2021-06-23 06:37:26,case_49,m5_50,send,PartyB,m5,,,SendTask_PartyC,20
+task,PartyC,Activity CZ,PartyC,2021-06-23 06:37:35,case_49,,,,,,,task_PartyC,20
+task,PartyB,Activity FF,PartyB,2021-06-23 06:37:38,case_49,,,,,,,task_PartyB,20
+ReceiveTask,PartyB,Activity H,PartyB,2021-06-23 06:37:43,case_49,m5_50,receive,,m5,PartyC,,ReceiveTask_PartyB,20
+ReceiveTask,PartyA,Activity F,PartyA,2021-06-23 06:37:48,case_49,m1_47,receive,,m1,PartyB,,ReceiveTask_PartyA,20
+task,PartyB,Activity G,PartyB,2021-06-23 06:37:50,case_49,,,,,,,task_PartyB,20
+task,PartyB,Activity DD,PartyB,2021-06-23 06:37:55,case_49,,,,,,,task_PartyB,20
+task,PartyC,Activity BZ,PartyC,2021-06-23 06:38:03,case_49,,,,,,,task_PartyC,20
+task,PartyB,Activity I,PartyB,2021-06-23 06:38:11,case_49,,,,,,,task_PartyB,20
+task,PartyB,Activity J,PartyB,2021-06-23 06:38:15,case_49,,,,,,,task_PartyB,20
+task,PartyA,Activity A,PartyA,2021-06-23 06:40:35,case_59,,,,,,,task_PartyA,3
+task,PartyA,Activity C,PartyA,2021-06-23 06:40:38,case_59,,,,,,,task_PartyA,3
+SendTask,PartyB,Activity AA,PartyB,2021-06-23 06:40:42,case_59,m4_59,send,PartyC,m4,,,SendTask_PartyB,3
+task,PartyA,Activity A,PartyA,2021-06-23 06:42:30,case_64,,,,,,,task_PartyA,8
+SendTask,PartyB,Activity AA,PartyB,2021-06-23 06:42:35,case_64,m4_66,send,PartyC,m4,,,SendTask_PartyB,8
+ReceiveTask,PartyC,Start,PartyC,2021-06-23 06:42:39,case_64,m4_66,receive,,m4,PartyB,start,ReceiveTask_PartyC,8
+task,PartyC,Activity ZA,PartyC,2021-06-23 06:42:41,case_64,,,,,,,task_PartyC,8
+task,PartyB,Activity BB,PartyB,2021-06-23 06:42:47,case_64,,,,,,,task_PartyB,8
+SendTask,PartyB,Activity CC,PartyB,2021-06-23 06:42:53,case_64,m1_65,send,PartyA,m1,,,SendTask_PartyB,8
+task,PartyC,Activity CZ,PartyC,2021-06-23 06:43:01,case_64,,,,,,,task_PartyC,8
+SendTask,PartyB,Activity EE,PartyB,2021-06-23 06:43:02,case_64,m2_63,send,PartyA,m2,,,SendTask_PartyB,8
+SendTask,PartyB,Activity AA,PartyB,2021-06-23 06:50:25,case_84,m4_88,send,PartyC,m4,,,SendTask_PartyB,4
+ReceiveTask,PartyC,Start,PartyC,2021-06-23 06:50:31,case_84,m4_88,receive,,m4,PartyB,start,ReceiveTask_PartyC,4
+task,PartyB,Activity BB,PartyB,2021-06-23 06:50:33,case_84,,,,,,,task_PartyB,4
+task,PartyC,Activity ZA,PartyC,2021-06-23 06:50:54,case_84,,,,,,,task_PartyC,4
+task,PartyA,Activity A,PartyA,2021-06-23 06:57:12,case_99,,,,,,,task_PartyA,13
+SendTask,PartyB,Activity AA,PartyB,2021-06-23 06:57:16,case_99,m4_104,send,PartyC,m4,,,SendTask_PartyB,13
+task,PartyA,Activity C,PartyA,2021-06-23 06:57:28,case_99,,,,,,,task_PartyA,13
+ReceiveTask,PartyC,Start,PartyC,2021-06-23 06:57:41,case_99,m4_104,receive,,m4,PartyB,start,ReceiveTask_PartyC,13
+task,PartyC,Activity ZA,PartyC,2021-06-23 06:57:44,case_99,,,,,,,task_PartyC,13
+task,PartyA,Activity B,PartyA,2021-06-23 06:57:49,case_99,,,,,,,task_PartyA,13
+SendTask,PartyC,Activity DZ,PartyC,2021-06-23 06:58:06,case_99,m5_106,send,PartyB,m5,,,SendTask_PartyC,13
+task,PartyC,Activity CZ,PartyC,2021-06-23 06:58:11,case_99,,,,,,,task_PartyC,13
+SendTask,PartyA,Activity E,PartyA,2021-06-23 06:58:15,case_99,m3_102,send,PartyB,m3,,,SendTask_PartyA,13
+task,PartyC,Activity BZ,PartyC,2021-06-23 06:58:21,case_99,,,,,,,task_PartyC,13
+task,PartyB,Activity BB,PartyB,2021-06-23 06:58:26,case_99,,,,,,,task_PartyB,13
+SendTask,PartyB,Activity CC,PartyB,2021-06-23 06:58:29,case_99,m1_103,send,PartyA,m1,,,SendTask_PartyB,13
+ReceiveTask,PartyA,Activity F,PartyA,2021-06-23 06:58:34,case_99,m1_103,receive,,m1,PartyB,,ReceiveTask_PartyA,13

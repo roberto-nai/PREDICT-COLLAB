@@ -1,0 +1,148 @@
+collab:elemType,org:group,concept:name,collab:participant,time:timestamp,case:concept:name,msgInstanceId,msgType,collab:toParticipant,msgFlow,collab:fromParticipant,eventType,selected_prefix_length
+task,Visitor,Decide individual or family ticket,Visitor,2021-06-16 11:20:35,case_123,,,,,,,11
+task,Visitor,Prepare family's information,Visitor,2021-06-16 11:20:39,case_123,,,,,,,11
+SendTask,Visitor,Send information to the ZooClub department,Visitor,2021-06-16 11:20:41,case_123,info_122,send,Zoo,info,,,11
+ReceiveTask,Zoo,Receive visitor information,Zoo,2021-06-16 11:20:45,case_123,info_122,receive,,info,Visitor,start,11
+task,Visitor,Wait for card,Visitor,2021-06-16 11:20:55,case_123,,,,,,,11
+task,Zoo,Enter customer data into the system,Zoo,2021-06-16 11:20:58,case_123,,,,,,,11
+task,Zoo,Send request to billing department,Zoo,2021-06-16 11:21:01,case_123,,,,,,,11
+task,Zoo,Forward information to making department,Zoo,2021-06-16 11:21:11,case_123,,,,,,,11
+task,Zoo,Mail ZooClub magazine,Zoo,2021-06-16 11:21:14,case_123,,,,,,,11
+SendTask,Zoo,Send payment request,Zoo,2021-06-16 11:21:17,case_123,request_120,send,Bank,request,,,11
+ReceiveTask,Bank,Receive payment request,Bank,2021-06-16 11:21:20,case_123,request_120,receive,,request,Zoo,start,11
+task,Visitor,Decide individual or family ticket,Visitor,2021-06-16 11:21:48,case_127,,,,,,,8
+task,Visitor,Prepare family's information,Visitor,2021-06-16 11:21:49,case_127,,,,,,,8
+SendTask,Visitor,Send information to the ZooClub department,Visitor,2021-06-16 11:21:50,case_127,info_126,send,Zoo,info,,,8
+ReceiveTask,Zoo,Receive visitor information,Zoo,2021-06-16 11:21:51,case_127,info_126,receive,,info,Visitor,start,8
+task,Zoo,Enter customer data into the system,Zoo,2021-06-16 11:21:56,case_127,,,,,,,8
+task,Visitor,Wait for card,Visitor,2021-06-16 11:21:59,case_127,,,,,,,8
+task,Zoo,Send request to billing department,Zoo,2021-06-16 11:22:06,case_127,,,,,,,8
+task,Zoo,Forward information to making department,Zoo,2021-06-16 11:22:14,case_127,,,,,,,8
+task,Visitor,Decide individual or family ticket,Visitor,2021-06-16 11:24:40,case_135,,,,,,,13
+task,Visitor,Prepare personal information,Visitor,2021-06-16 11:24:42,case_135,,,,,,,13
+SendTask,Visitor,Send information to the ZooClub department,Visitor,2021-06-16 11:24:45,case_135,info_134,send,Zoo,info,,,13
+task,Visitor,Wait for card,Visitor,2021-06-16 11:24:49,case_135,,,,,,,13
+ReceiveTask,Zoo,Receive visitor information,Zoo,2021-06-16 11:24:51,case_135,info_134,receive,,info,Visitor,start,13
+task,Zoo,Enter customer data into the system,Zoo,2021-06-16 11:24:55,case_135,,,,,,,13
+task,Zoo,Send request to billing department,Zoo,2021-06-16 11:25:02,case_135,,,,,,,13
+task,Zoo,Forward information to making department,Zoo,2021-06-16 11:25:06,case_135,,,,,,,13
+task,Zoo,Mail ZooClub magazine,Zoo,2021-06-16 11:25:24,case_135,,,,,,,13
+SendTask,Zoo,Send payment request,Zoo,2021-06-16 11:25:28,case_135,request_132,send,Bank,request,,,13
+ReceiveTask,Bank,Receive payment request,Bank,2021-06-16 11:25:36,case_135,request_132,receive,,request,Zoo,start,13
+task,Zoo,Wait fot payment,Zoo,2021-06-16 11:25:37,case_135,,,,,,,13
+task,Bank,Process payment information,Bank,2021-06-16 11:25:42,case_135,,,,,,,13
+task,Visitor,Decide individual or family ticket,Visitor,2021-06-16 11:27:22,case_143,,,,,,,6
+task,Visitor,Prepare family's information,Visitor,2021-06-16 11:27:27,case_143,,,,,,,6
+SendTask,Visitor,Send information to the ZooClub department,Visitor,2021-06-16 11:27:32,case_143,info_142,send,Zoo,info,,,6
+ReceiveTask,Zoo,Receive visitor information,Zoo,2021-06-16 11:27:32,case_143,info_142,receive,,info,Visitor,start,6
+task,Visitor,Wait for card,Visitor,2021-06-16 11:27:39,case_143,,,,,,,6
+task,Zoo,Enter customer data into the system,Zoo,2021-06-16 11:27:44,case_143,,,,,,,6
+task,Visitor,Decide individual or family ticket,Visitor,2021-06-16 10:48:10,case_15,,,,,,,7
+task,Visitor,Prepare family's information,Visitor,2021-06-16 10:48:13,case_15,,,,,,,7
+SendTask,Visitor,Send information to the ZooClub department,Visitor,2021-06-16 10:48:17,case_15,info_14,send,Zoo,info,,,7
+ReceiveTask,Zoo,Receive visitor information,Zoo,2021-06-16 10:48:18,case_15,info_14,receive,,info,Visitor,start,7
+task,Zoo,Enter customer data into the system,Zoo,2021-06-16 10:48:27,case_15,,,,,,,7
+task,Visitor,Wait for card,Visitor,2021-06-16 10:48:37,case_15,,,,,,,7
+task,Zoo,Forward information to making department,Zoo,2021-06-16 10:48:38,case_15,,,,,,,7
+task,Visitor,Decide individual or family ticket,Visitor,2021-06-16 11:31:17,case_155,,,,,,,5
+task,Visitor,Prepare family's information,Visitor,2021-06-16 11:31:18,case_155,,,,,,,5
+SendTask,Visitor,Send information to the ZooClub department,Visitor,2021-06-16 11:31:22,case_155,info_154,send,Zoo,info,,,5
+task,Visitor,Wait for card,Visitor,2021-06-16 11:31:25,case_155,,,,,,,5
+ReceiveTask,Zoo,Receive visitor information,Zoo,2021-06-16 11:31:28,case_155,info_154,receive,,info,Visitor,start,5
+task,Visitor,Decide individual or family ticket,Visitor,2021-06-16 11:38:09,case_179,,,,,,,8
+task,Visitor,Prepare personal information,Visitor,2021-06-16 11:38:09,case_179,,,,,,,8
+SendTask,Visitor,Send information to the ZooClub department,Visitor,2021-06-16 11:38:14,case_179,info_178,send,Zoo,info,,,8
+ReceiveTask,Zoo,Receive visitor information,Zoo,2021-06-16 11:38:15,case_179,info_178,receive,,info,Visitor,start,8
+task,Visitor,Wait for card,Visitor,2021-06-16 11:38:22,case_179,,,,,,,8
+task,Zoo,Enter customer data into the system,Zoo,2021-06-16 11:38:24,case_179,,,,,,,8
+task,Zoo,Send request to billing department,Zoo,2021-06-16 11:38:26,case_179,,,,,,,8
+task,Zoo,Forward information to making department,Zoo,2021-06-16 11:38:27,case_179,,,,,,,8
+task,Visitor,Decide individual or family ticket,Visitor,2021-06-16 11:39:06,case_183,,,,,,,7
+task,Visitor,Prepare personal information,Visitor,2021-06-16 11:39:07,case_183,,,,,,,7
+SendTask,Visitor,Send information to the ZooClub department,Visitor,2021-06-16 11:39:10,case_183,info_182,send,Zoo,info,,,7
+ReceiveTask,Zoo,Receive visitor information,Zoo,2021-06-16 11:39:12,case_183,info_182,receive,,info,Visitor,start,7
+task,Zoo,Enter customer data into the system,Zoo,2021-06-16 11:39:15,case_183,,,,,,,7
+task,Zoo,Forward information to making department,Zoo,2021-06-16 11:39:21,case_183,,,,,,,7
+task,Visitor,Wait for card,Visitor,2021-06-16 11:39:35,case_183,,,,,,,7
+task,Visitor,Decide individual or family ticket,Visitor,2021-06-16 11:40:33,case_187,,,,,,,2
+task,Visitor,Prepare family's information,Visitor,2021-06-16 11:40:34,case_187,,,,,,,2
+task,Visitor,Decide individual or family ticket,Visitor,2021-06-16 11:46:44,case_211,,,,,,,8
+task,Visitor,Prepare family's information,Visitor,2021-06-16 11:46:46,case_211,,,,,,,8
+SendTask,Visitor,Send information to the ZooClub department,Visitor,2021-06-16 11:46:51,case_211,info_210,send,Zoo,info,,,8
+ReceiveTask,Zoo,Receive visitor information,Zoo,2021-06-16 11:46:56,case_211,info_210,receive,,info,Visitor,start,8
+task,Visitor,Wait for card,Visitor,2021-06-16 11:47:04,case_211,,,,,,,8
+task,Zoo,Enter customer data into the system,Zoo,2021-06-16 11:47:08,case_211,,,,,,,8
+task,Zoo,Send request to billing department,Zoo,2021-06-16 11:47:08,case_211,,,,,,,8
+task,Zoo,Forward information to making department,Zoo,2021-06-16 11:47:16,case_211,,,,,,,8
+task,Visitor,Decide individual or family ticket,Visitor,2021-06-16 11:51:46,case_227,,,,,,,5
+task,Visitor,Prepare personal information,Visitor,2021-06-16 11:51:47,case_227,,,,,,,5
+SendTask,Visitor,Send information to the ZooClub department,Visitor,2021-06-16 11:51:51,case_227,info_226,send,Zoo,info,,,5
+ReceiveTask,Zoo,Receive visitor information,Zoo,2021-06-16 11:51:55,case_227,info_226,receive,,info,Visitor,start,5
+task,Zoo,Enter customer data into the system,Zoo,2021-06-16 11:51:58,case_227,,,,,,,5
+task,Visitor,Decide individual or family ticket,Visitor,2021-06-16 12:04:56,case_271,,,,,,,7
+task,Visitor,Prepare personal information,Visitor,2021-06-16 12:05:00,case_271,,,,,,,7
+SendTask,Visitor,Send information to the ZooClub department,Visitor,2021-06-16 12:05:00,case_271,info_270,send,Zoo,info,,,7
+ReceiveTask,Zoo,Receive visitor information,Zoo,2021-06-16 12:05:04,case_271,info_270,receive,,info,Visitor,start,7
+task,Visitor,Wait for card,Visitor,2021-06-16 12:05:08,case_271,,,,,,,7
+task,Zoo,Enter customer data into the system,Zoo,2021-06-16 12:05:10,case_271,,,,,,,7
+task,Zoo,Send request to billing department,Zoo,2021-06-16 12:05:15,case_271,,,,,,,7
+task,Visitor,Decide individual or family ticket,Visitor,2021-06-16 12:12:58,case_299,,,,,,,5
+task,Visitor,Prepare family's information,Visitor,2021-06-16 12:12:59,case_299,,,,,,,5
+SendTask,Visitor,Send information to the ZooClub department,Visitor,2021-06-16 12:13:02,case_299,info_298,send,Zoo,info,,,5
+task,Visitor,Wait for card,Visitor,2021-06-16 12:13:09,case_299,,,,,,,5
+ReceiveTask,Zoo,Receive visitor information,Zoo,2021-06-16 12:13:12,case_299,info_298,receive,,info,Visitor,start,5
+task,Visitor,Decide individual or family ticket,Visitor,2021-06-16 12:14:20,case_303,,,,,,,15
+task,Visitor,Prepare personal information,Visitor,2021-06-16 12:14:22,case_303,,,,,,,15
+SendTask,Visitor,Send information to the ZooClub department,Visitor,2021-06-16 12:14:23,case_303,info_302,send,Zoo,info,,,15
+ReceiveTask,Zoo,Receive visitor information,Zoo,2021-06-16 12:14:26,case_303,info_302,receive,,info,Visitor,start,15
+task,Zoo,Enter customer data into the system,Zoo,2021-06-16 12:14:31,case_303,,,,,,,15
+task,Visitor,Wait for card,Visitor,2021-06-16 12:14:44,case_303,,,,,,,15
+task,Zoo,Forward information to making department,Zoo,2021-06-16 12:14:50,case_303,,,,,,,15
+task,Zoo,Mail ZooClub magazine,Zoo,2021-06-16 12:14:55,case_303,,,,,,,15
+task,Zoo,Send request to billing department,Zoo,2021-06-16 12:14:59,case_303,,,,,,,15
+task,Zoo,Wait fot payment,Zoo,2021-06-16 12:15:05,case_303,,,,,,,15
+SendTask,Zoo,Send payment request,Zoo,2021-06-16 12:15:08,case_303,request_300,send,Bank,request,,,15
+ReceiveTask,Bank,Receive payment request,Bank,2021-06-16 12:15:09,case_303,request_300,receive,,request,Zoo,start,15
+task,Bank,Process payment information,Bank,2021-06-16 12:15:11,case_303,,,,,,,15
+SendTask,Bank,Change account,Bank,2021-06-16 12:15:14,case_303,account_301,send,Zoo,account,,,15
+ReceiveTask,Zoo,Payment confirmed,Zoo,2021-06-16 12:15:19,case_303,account_301,receive,,account,Bank,notification,15
+task,Visitor,Decide individual or family ticket,Visitor,2021-06-16 12:17:38,case_315,,,,,,,5
+task,Visitor,Prepare family's information,Visitor,2021-06-16 12:17:38,case_315,,,,,,,5
+SendTask,Visitor,Send information to the ZooClub department,Visitor,2021-06-16 12:17:39,case_315,info_314,send,Zoo,info,,,5
+task,Visitor,Wait for card,Visitor,2021-06-16 12:17:44,case_315,,,,,,,5
+ReceiveTask,Zoo,Receive visitor information,Zoo,2021-06-16 12:17:47,case_315,info_314,receive,,info,Visitor,start,5
+task,Visitor,Decide individual or family ticket,Visitor,2021-06-16 12:33:02,case_367,,,,,,,7
+task,Visitor,Prepare family's information,Visitor,2021-06-16 12:33:03,case_367,,,,,,,7
+SendTask,Visitor,Send information to the ZooClub department,Visitor,2021-06-16 12:33:04,case_367,info_366,send,Zoo,info,,,7
+ReceiveTask,Zoo,Receive visitor information,Zoo,2021-06-16 12:33:05,case_367,info_366,receive,,info,Visitor,start,7
+task,Visitor,Wait for card,Visitor,2021-06-16 12:33:10,case_367,,,,,,,7
+task,Zoo,Enter customer data into the system,Zoo,2021-06-16 12:33:11,case_367,,,,,,,7
+task,Zoo,Forward information to making department,Zoo,2021-06-16 12:33:15,case_367,,,,,,,7
+task,Visitor,Decide individual or family ticket,Visitor,2021-06-16 12:37:19,case_383,,,,,,,6
+task,Visitor,Prepare family's information,Visitor,2021-06-16 12:37:23,case_383,,,,,,,6
+SendTask,Visitor,Send information to the ZooClub department,Visitor,2021-06-16 12:37:24,case_383,info_382,send,Zoo,info,,,6
+task,Visitor,Wait for card,Visitor,2021-06-16 12:37:31,case_383,,,,,,,6
+ReceiveTask,Zoo,Receive visitor information,Zoo,2021-06-16 12:37:34,case_383,info_382,receive,,info,Visitor,start,6
+task,Zoo,Enter customer data into the system,Zoo,2021-06-16 12:37:38,case_383,,,,,,,6
+task,Visitor,Decide individual or family ticket,Visitor,2021-06-16 12:42:14,case_399,,,,,,,5
+task,Visitor,Prepare family's information,Visitor,2021-06-16 12:42:14,case_399,,,,,,,5
+SendTask,Visitor,Send information to the ZooClub department,Visitor,2021-06-16 12:42:19,case_399,info_398,send,Zoo,info,,,5
+ReceiveTask,Zoo,Receive visitor information,Zoo,2021-06-16 12:42:22,case_399,info_398,receive,,info,Visitor,start,5
+task,Zoo,Enter customer data into the system,Zoo,2021-06-16 12:42:26,case_399,,,,,,,5
+task,Visitor,Decide individual or family ticket,Visitor,2021-06-16 11:04:58,case_67,,,,,,,15
+task,Visitor,Prepare family's information,Visitor,2021-06-16 11:04:59,case_67,,,,,,,15
+SendTask,Visitor,Send information to the ZooClub department,Visitor,2021-06-16 11:04:59,case_67,info_66,send,Zoo,info,,,15
+task,Visitor,Wait for card,Visitor,2021-06-16 11:05:07,case_67,,,,,,,15
+ReceiveTask,Zoo,Receive visitor information,Zoo,2021-06-16 11:05:11,case_67,info_66,receive,,info,Visitor,start,15
+task,Zoo,Enter customer data into the system,Zoo,2021-06-16 11:05:12,case_67,,,,,,,15
+task,Zoo,Forward information to making department,Zoo,2021-06-16 11:05:15,case_67,,,,,,,15
+task,Zoo,Mail ZooClub magazine,Zoo,2021-06-16 11:05:21,case_67,,,,,,,15
+task,Zoo,Send request to billing department,Zoo,2021-06-16 11:05:27,case_67,,,,,,,15
+task,Zoo,Wait fot payment,Zoo,2021-06-16 11:05:31,case_67,,,,,,,15
+SendTask,Zoo,Send payment request,Zoo,2021-06-16 11:05:37,case_67,request_64,send,Bank,request,,,15
+ReceiveTask,Bank,Receive payment request,Bank,2021-06-16 11:05:40,case_67,request_64,receive,,request,Zoo,start,15
+task,Bank,Process payment information,Bank,2021-06-16 11:05:45,case_67,,,,,,,15
+SendTask,Bank,Change account,Bank,2021-06-16 11:05:46,case_67,account_65,send,Zoo,account,,,15
+ReceiveTask,Zoo,Payment confirmed,Zoo,2021-06-16 11:05:54,case_67,account_65,receive,,account,Bank,notification,15
+task,Visitor,Decide individual or family ticket,Visitor,2021-06-16 11:11:26,case_91,,,,,,,2
+task,Visitor,Prepare personal information,Visitor,2021-06-16 11:11:28,case_91,,,,,,,2

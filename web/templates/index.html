@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predict-Collab / Home</title>
+    <link href="{{ url_for('static', filename='styles/style.css') }}" rel="stylesheet" />
+</head>
+
+<body class="inicio">
+
+<!-- Menú superior -->
+<div class="navbar">
+    <a href="{{ url_for('index') }}" class="inicio">Home</a>
+    <a href="{{ url_for('get_logs') }}" class="logs">Logs</a>
+    <a href="{{ url_for('get_modelos') }}" class="inicio">Models</a>
+    <a href="{{ url_for('pred') }}" class="inicio">Predictions</a>
+    <a href="{{ url_for('info') }}" class="inicio">FAQ</a>
+</div>
+<h1 class="titulosPantallas">Welcome to Predict-Collab!</h1>
+<!-- Contenedor de las imágenes -->
+<div class="image-container">
+    <div class="inicio">
+        <h2>Logs: </h2>
+        <img src="{{ url_for('static', filename='images/image1.png') }}" alt="Log de Eventos"  >
+        <div class="caption inicio">
+            <p>In this section, you can create a new process, associate it with a log in CSV or XES format,
+                and add a custom description. Additionally, it offers the ability to manage uploaded logs,
+                allowing you to delete,
+                download, or select them to proceed with creating and training a model.</p>
+        </div>
+        <div class="boton-nuevo">
+            <form action="/logs" class="inicio">
+                <button type="submit" class="boton-submit-index inicio">Go to Logs</button>
+            </form>
+        </div>
+    </div>
+    <div class="inicio">
+        <h2>Models: </h2>
+         <img src="{{ url_for('static', filename='images/image2.png') }}" alt="Predicción" >
+        <div class="caption inicio">
+             <p>In this section you can create and train a new model by selecting a log,
+                 choose what type of prediction you want to make and select which columns will be taken for the prediction.
+                 It offers the possibility to manage the models created, allowing you to delete them,
+                 view their evaluation metrics or select them to go to make a prediction.</p>
+        </div>
+         <div class="boton-nuevo">
+            <form action="/models" class="inicio">
+                <button type="submit" class="boton-submit-index inicio">Go to Models</button>
+            </form>
+        </div>
+    </div>
+    <div class="inicio">
+        <h2>Predictions: </h2>
+        <img src="{{ url_for('static', filename='images/image3.png') }}" alt="Modelos de Negocio">
+        <div class="caption inicio">
+             <p>In this section you can perform the prediction of your traces.
+                 By selecting a process and its associated log, all available prediction types will be listed,
+                 followed by the models associated with those types.
+                 Then, simply load the trace for which you wish to perform the prediction.</p>
+        </div>
+         <div class="boton-nuevo">
+            <form action="/predictions" class="inicio">
+                <button type="submit" class="boton-submit-index inicio">Go to Predictions</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+
+</html>

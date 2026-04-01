@@ -1,0 +1,125 @@
+msgInstanceId,msgProtocol,msgType,org:group,concept:name,collab:toParticipant,msgName,collab:elemType,collab:participant,time:timestamp,case:concept:name,collab:fromParticipant,eventType,selected_prefix_length
+disease_123,P2P,send,Patient,Communicate disease,Gynecologist,disease,SendTask,Patient,2021-06-17 06:17:03,case_124,,,1
+disease_197,P2P,send,Patient,Communicate disease,Gynecologist,disease,SendTask,Patient,2021-06-17 06:28:56,case_194,,,17
+disease_197,P2P,receive,Gynecologist,Receive disease info,,disease,ReceiveTask,Gynecologist,2021-06-17 06:29:00,case_194,Patient,start,17
+,,,Gynecologist,Blood draw,,,task,Gynecologist,2021-06-17 06:29:01,case_194,,,17
+blood sample_198,P2P,send,Gynecologist,Send blood sample,Laboratory,blood sample,SendTask,Gynecologist,2021-06-17 06:29:04,case_194,,,17
+blood sample_198,P2P,receive,Laboratory,Receive blood sample,,blood sample,ReceiveTask,Laboratory,2021-06-17 06:29:12,case_194,Gynecologist,start,17
+,,,Gynecologist,Examine patient,,,task,Gynecologist,2021-06-17 06:29:16,case_194,,,17
+,,,Laboratory,Analyse blood sample,,,task,Laboratory,2021-06-17 06:29:23,case_194,,,17
+results_199,P2P,send,Laboratory,Send results,Gynecologist,results,SendTask,Laboratory,2021-06-17 06:29:28,case_194,,,17
+results_199,P2P,receive,Gynecologist,Receive blood analysis results,,results,ReceiveTask,Gynecologist,2021-06-17 06:29:32,case_194,Laboratory,,17
+hospitalisation_200,P2P,send,Gynecologist,Communicate the need to hospitalise,Patient,hospitalisation,SendTask,Gynecologist,2021-06-17 06:29:33,case_194,,,17
+admission request_201,P2P,send,Gynecologist,Require patient admission,Hospital,admission request,SendTask,Gynecologist,2021-06-17 06:29:34,case_194,,,17
+admission request_201,P2P,receive,Hospital,Admit patient,,admission request,ReceiveTask,Hospital,2021-06-17 06:29:39,case_194,Gynecologist,start,17
+patient analysis_202,P2P,send,Gynecologist,Forward patient analysis results,Hospital,patient analysis,SendTask,Gynecologist,2021-06-17 06:29:48,case_194,,,17
+hospitalisation_200,P2P,receive,Patient,Hospitalisation needed,,hospitalisation,ReceiveTask,Patient,2021-06-17 06:29:55,case_194,Gynecologist,,17
+,,,Hospital,Create medical record,,,task,Hospital,2021-06-17 06:30:03,case_194,,,17
+patient analysis_202,P2P,receive,Hospital,Receive patient results,,patient analysis,ReceiveTask,Hospital,2021-06-17 06:30:03,case_194,Gynecologist,,17
+admission_203,P2P,send,Hospital,Send admission info,Patient,admission,SendTask,Hospital,2021-06-17 06:30:07,case_194,,,17
+disease_22,P2P,send,Patient,Communicate disease,Gynecologist,disease,SendTask,Patient,2021-06-17 06:02:23,case_24,,,10
+disease_22,P2P,receive,Gynecologist,Receive disease info,,disease,ReceiveTask,Gynecologist,2021-06-17 06:02:26,case_24,Patient,start,10
+,,,Gynecologist,Blood draw,,,task,Gynecologist,2021-06-17 06:02:31,case_24,,,10
+,,,Gynecologist,Examine patient,,,task,Gynecologist,2021-06-17 06:02:35,case_24,,,10
+blood sample_23,P2P,send,Gynecologist,Send blood sample,Laboratory,blood sample,SendTask,Gynecologist,2021-06-17 06:02:43,case_24,,,10
+blood sample_23,P2P,receive,Laboratory,Receive blood sample,,blood sample,ReceiveTask,Laboratory,2021-06-17 06:02:44,case_24,Gynecologist,start,10
+,,,Laboratory,Analyse blood sample,,,task,Laboratory,2021-06-17 06:02:49,case_24,,,10
+results_24,P2P,send,Laboratory,Send results,Gynecologist,results,SendTask,Laboratory,2021-06-17 06:02:54,case_24,,,10
+results_24,P2P,receive,Gynecologist,Receive blood analysis results,,results,ReceiveTask,Gynecologist,2021-06-17 06:02:56,case_24,Laboratory,,10
+hospitalisation_25,P2P,send,Gynecologist,Communicate the need to hospitalise,Patient,hospitalisation,SendTask,Gynecologist,2021-06-17 06:02:58,case_24,,,10
+disease_261,P2P,send,Patient,Communicate disease,Gynecologist,disease,SendTask,Patient,2021-06-17 06:39:25,case_244,,,8
+disease_261,P2P,receive,Gynecologist,Receive disease info,,disease,ReceiveTask,Gynecologist,2021-06-17 06:39:26,case_244,Patient,start,8
+,,,Gynecologist,Blood draw,,,task,Gynecologist,2021-06-17 06:39:30,case_244,,,8
+,,,Gynecologist,Examine patient,,,task,Gynecologist,2021-06-17 06:39:39,case_244,,,8
+blood sample_262,P2P,send,Gynecologist,Send blood sample,Laboratory,blood sample,SendTask,Gynecologist,2021-06-17 06:39:43,case_244,,,8
+blood sample_262,P2P,receive,Laboratory,Receive blood sample,,blood sample,ReceiveTask,Laboratory,2021-06-17 06:39:48,case_244,Gynecologist,start,8
+,,,Laboratory,Analyse blood sample,,,task,Laboratory,2021-06-17 06:39:49,case_244,,,8
+results_263,P2P,send,Laboratory,Send results,Gynecologist,results,SendTask,Laboratory,2021-06-17 06:39:49,case_244,,,8
+disease_302,P2P,send,Patient,Communicate disease,Gynecologist,disease,SendTask,Patient,2021-06-17 06:45:57,case_284,,,7
+disease_302,P2P,receive,Gynecologist,Receive disease info,,disease,ReceiveTask,Gynecologist,2021-06-17 06:46:00,case_284,Patient,start,7
+,,,Gynecologist,Blood draw,,,task,Gynecologist,2021-06-17 06:46:00,case_284,,,7
+blood sample_303,P2P,send,Gynecologist,Send blood sample,Laboratory,blood sample,SendTask,Gynecologist,2021-06-17 06:46:01,case_284,,,7
+blood sample_303,P2P,receive,Laboratory,Receive blood sample,,blood sample,ReceiveTask,Laboratory,2021-06-17 06:46:08,case_284,Gynecologist,start,7
+,,,Laboratory,Analyse blood sample,,,task,Laboratory,2021-06-17 06:46:16,case_284,,,7
+,,,Gynecologist,Examine patient,,,task,Gynecologist,2021-06-17 06:46:20,case_284,,,7
+disease_309,P2P,send,Patient,Communicate disease,Gynecologist,disease,SendTask,Patient,2021-06-17 06:47:16,case_289,,,6
+disease_309,P2P,receive,Gynecologist,Receive disease info,,disease,ReceiveTask,Gynecologist,2021-06-17 06:47:20,case_289,Patient,start,6
+,,,Gynecologist,Examine patient,,,task,Gynecologist,2021-06-17 06:47:23,case_289,,,6
+,,,Gynecologist,Blood draw,,,task,Gynecologist,2021-06-17 06:47:26,case_289,,,6
+blood sample_310,P2P,send,Gynecologist,Send blood sample,Laboratory,blood sample,SendTask,Gynecologist,2021-06-17 06:47:27,case_289,,,6
+blood sample_310,P2P,receive,Laboratory,Receive blood sample,,blood sample,ReceiveTask,Laboratory,2021-06-17 06:47:30,case_289,Gynecologist,start,6
+disease_363,P2P,send,Patient,Communicate disease,Gynecologist,disease,SendTask,Patient,2021-06-17 06:55:19,case_334,,,4
+disease_363,P2P,receive,Gynecologist,Receive disease info,,disease,ReceiveTask,Gynecologist,2021-06-17 06:55:23,case_334,Patient,start,4
+,,,Gynecologist,Blood draw,,,task,Gynecologist,2021-06-17 06:55:25,case_334,,,4
+,,,Gynecologist,Examine patient,,,task,Gynecologist,2021-06-17 06:55:33,case_334,,,4
+disease_36,P2P,send,Patient,Communicate disease,Gynecologist,disease,SendTask,Patient,2021-06-17 06:05:01,case_34,,,9
+disease_36,P2P,receive,Gynecologist,Receive disease info,,disease,ReceiveTask,Gynecologist,2021-06-17 06:05:04,case_34,Patient,start,9
+,,,Gynecologist,Blood draw,,,task,Gynecologist,2021-06-17 06:05:08,case_34,,,9
+,,,Gynecologist,Examine patient,,,task,Gynecologist,2021-06-17 06:05:13,case_34,,,9
+blood sample_37,P2P,send,Gynecologist,Send blood sample,Laboratory,blood sample,SendTask,Gynecologist,2021-06-17 06:05:17,case_34,,,9
+blood sample_37,P2P,receive,Laboratory,Receive blood sample,,blood sample,ReceiveTask,Laboratory,2021-06-17 06:05:17,case_34,Gynecologist,start,9
+,,,Laboratory,Analyse blood sample,,,task,Laboratory,2021-06-17 06:05:19,case_34,,,9
+results_38,P2P,send,Laboratory,Send results,Gynecologist,results,SendTask,Laboratory,2021-06-17 06:05:20,case_34,,,9
+results_38,P2P,receive,Gynecologist,Receive blood analysis results,,results,ReceiveTask,Gynecologist,2021-06-17 06:05:22,case_34,Laboratory,,9
+disease_377,P2P,send,Patient,Communicate disease,Gynecologist,disease,SendTask,Patient,2021-06-17 06:57:34,case_344,,,5
+disease_377,P2P,receive,Gynecologist,Receive disease info,,disease,ReceiveTask,Gynecologist,2021-06-17 06:57:37,case_344,Patient,start,5
+,,,Gynecologist,Blood draw,,,task,Gynecologist,2021-06-17 06:57:43,case_344,,,5
+blood sample_378,P2P,send,Gynecologist,Send blood sample,Laboratory,blood sample,SendTask,Gynecologist,2021-06-17 06:57:49,case_344,,,5
+blood sample_378,P2P,receive,Laboratory,Receive blood sample,,blood sample,ReceiveTask,Laboratory,2021-06-17 06:57:54,case_344,Gynecologist,start,5
+disease_399,P2P,send,Patient,Communicate disease,Gynecologist,disease,SendTask,Patient,2021-06-17 07:01:08,case_364,,,2
+disease_399,P2P,receive,Gynecologist,Receive disease info,,disease,ReceiveTask,Gynecologist,2021-06-17 07:01:11,case_364,Patient,start,2
+disease_406,P2P,send,Patient,Communicate disease,Gynecologist,disease,SendTask,Patient,2021-06-17 07:02:21,case_369,,,6
+disease_406,P2P,receive,Gynecologist,Receive disease info,,disease,ReceiveTask,Gynecologist,2021-06-17 07:02:24,case_369,Patient,start,6
+,,,Gynecologist,Examine patient,,,task,Gynecologist,2021-06-17 07:02:29,case_369,,,6
+,,,Gynecologist,Blood draw,,,task,Gynecologist,2021-06-17 07:02:33,case_369,,,6
+blood sample_407,P2P,send,Gynecologist,Send blood sample,Laboratory,blood sample,SendTask,Gynecologist,2021-06-17 07:02:38,case_369,,,6
+blood sample_407,P2P,receive,Laboratory,Receive blood sample,,blood sample,ReceiveTask,Laboratory,2021-06-17 07:02:41,case_369,Gynecologist,start,6
+disease_0,P2P,send,Patient,Communicate disease,Gynecologist,disease,SendTask,Patient,2021-06-17 05:58:55,case_4,,,7
+disease_0,P2P,receive,Gynecologist,Receive disease info,,disease,ReceiveTask,Gynecologist,2021-06-17 05:58:59,case_4,Patient,start,7
+,,,Gynecologist,Examine patient,,,task,Gynecologist,2021-06-17 05:59:03,case_4,,,7
+,,,Gynecologist,Blood draw,,,task,Gynecologist,2021-06-17 05:59:08,case_4,,,7
+blood sample_1,P2P,send,Gynecologist,Send blood sample,Laboratory,blood sample,SendTask,Gynecologist,2021-06-17 05:59:11,case_4,,,7
+blood sample_1,P2P,receive,Laboratory,Receive blood sample,,blood sample,ReceiveTask,Laboratory,2021-06-17 05:59:16,case_4,Gynecologist,start,7
+,,,Laboratory,Analyse blood sample,,,task,Laboratory,2021-06-17 05:59:16,case_4,,,7
+disease_472,P2P,send,Patient,Communicate disease,Gynecologist,disease,SendTask,Patient,2021-06-17 07:12:40,case_429,,,4
+disease_472,P2P,receive,Gynecologist,Receive disease info,,disease,ReceiveTask,Gynecologist,2021-06-17 07:12:43,case_429,Patient,start,4
+,,,Gynecologist,Examine patient,,,task,Gynecologist,2021-06-17 07:12:44,case_429,,,4
+,,,Gynecologist,Blood draw,,,task,Gynecologist,2021-06-17 07:12:51,case_429,,,4
+disease_495,P2P,send,Patient,Communicate disease,Gynecologist,disease,SendTask,Patient,2021-06-17 07:16:30,case_454,,,4
+disease_495,P2P,receive,Gynecologist,Receive disease info,,disease,ReceiveTask,Gynecologist,2021-06-17 07:16:31,case_454,Patient,start,4
+,,,Gynecologist,Blood draw,,,task,Gynecologist,2021-06-17 07:16:34,case_454,,,4
+,,,Gynecologist,Examine patient,,,task,Gynecologist,2021-06-17 07:16:41,case_454,,,4
+disease_532,P2P,send,Patient,Communicate disease,Gynecologist,disease,SendTask,Patient,2021-06-17 07:22:24,case_489,,,3
+disease_532,P2P,receive,Gynecologist,Receive disease info,,disease,ReceiveTask,Gynecologist,2021-06-17 07:22:27,case_489,Patient,start,3
+,,,Gynecologist,Examine patient,,,task,Gynecologist,2021-06-17 07:22:33,case_489,,,3
+disease_55,P2P,send,Patient,Communicate disease,Gynecologist,disease,SendTask,Patient,2021-06-17 06:07:41,case_54,,,8
+disease_55,P2P,receive,Gynecologist,Receive disease info,,disease,ReceiveTask,Gynecologist,2021-06-17 06:07:42,case_54,Patient,start,8
+,,,Gynecologist,Examine patient,,,task,Gynecologist,2021-06-17 06:07:51,case_54,,,8
+,,,Gynecologist,Blood draw,,,task,Gynecologist,2021-06-17 06:07:52,case_54,,,8
+blood sample_56,P2P,send,Gynecologist,Send blood sample,Laboratory,blood sample,SendTask,Gynecologist,2021-06-17 06:07:52,case_54,,,8
+blood sample_56,P2P,receive,Laboratory,Receive blood sample,,blood sample,ReceiveTask,Laboratory,2021-06-17 06:07:56,case_54,Gynecologist,start,8
+,,,Laboratory,Analyse blood sample,,,task,Laboratory,2021-06-17 06:07:59,case_54,,,8
+results_57,P2P,send,Laboratory,Send results,Gynecologist,results,SendTask,Laboratory,2021-06-17 06:08:03,case_54,,,8
+disease_74,P2P,send,Patient,Communicate disease,Gynecologist,disease,SendTask,Patient,2021-06-17 06:10:14,case_74,,,4
+disease_74,P2P,receive,Gynecologist,Receive disease info,,disease,ReceiveTask,Gynecologist,2021-06-17 06:10:18,case_74,Patient,start,4
+,,,Gynecologist,Blood draw,,,task,Gynecologist,2021-06-17 06:10:23,case_74,,,4
+blood sample_75,P2P,send,Gynecologist,Send blood sample,Laboratory,blood sample,SendTask,Gynecologist,2021-06-17 06:10:25,case_74,,,4
+disease_81,P2P,send,Patient,Communicate disease,Gynecologist,disease,SendTask,Patient,2021-06-17 06:11:30,case_79,,,8
+disease_81,P2P,receive,Gynecologist,Receive disease info,,disease,ReceiveTask,Gynecologist,2021-06-17 06:11:32,case_79,Patient,start,8
+,,,Gynecologist,Examine patient,,,task,Gynecologist,2021-06-17 06:11:36,case_79,,,8
+,,,Gynecologist,Blood draw,,,task,Gynecologist,2021-06-17 06:11:39,case_79,,,8
+blood sample_82,P2P,send,Gynecologist,Send blood sample,Laboratory,blood sample,SendTask,Gynecologist,2021-06-17 06:11:40,case_79,,,8
+blood sample_82,P2P,receive,Laboratory,Receive blood sample,,blood sample,ReceiveTask,Laboratory,2021-06-17 06:11:42,case_79,Gynecologist,start,8
+,,,Laboratory,Analyse blood sample,,,task,Laboratory,2021-06-17 06:11:43,case_79,,,8
+results_83,P2P,send,Laboratory,Send results,Gynecologist,results,SendTask,Laboratory,2021-06-17 06:11:43,case_79,,,8
+disease_85,P2P,send,Patient,Communicate disease,Gynecologist,disease,SendTask,Patient,2021-06-17 06:11:55,case_84,,,3
+disease_85,P2P,receive,Gynecologist,Receive disease info,,disease,ReceiveTask,Gynecologist,2021-06-17 06:11:55,case_84,Patient,start,3
+,,,Gynecologist,Examine patient,,,task,Gynecologist,2021-06-17 06:11:58,case_84,,,3
+disease_89,P2P,send,Patient,Communicate disease,Gynecologist,disease,SendTask,Patient,2021-06-17 06:12:22,case_89,,,8
+disease_89,P2P,receive,Gynecologist,Receive disease info,,disease,ReceiveTask,Gynecologist,2021-06-17 06:12:26,case_89,Patient,start,8
+,,,Gynecologist,Examine patient,,,task,Gynecologist,2021-06-17 06:12:30,case_89,,,8
+,,,Gynecologist,Blood draw,,,task,Gynecologist,2021-06-17 06:12:35,case_89,,,8
+blood sample_90,P2P,send,Gynecologist,Send blood sample,Laboratory,blood sample,SendTask,Gynecologist,2021-06-17 06:12:39,case_89,,,8
+blood sample_90,P2P,receive,Laboratory,Receive blood sample,,blood sample,ReceiveTask,Laboratory,2021-06-17 06:12:39,case_89,Gynecologist,start,8
+,,,Laboratory,Analyse blood sample,,,task,Laboratory,2021-06-17 06:12:41,case_89,,,8
+results_91,P2P,send,Laboratory,Send results,Gynecologist,results,SendTask,Laboratory,2021-06-17 06:12:45,case_89,,,8

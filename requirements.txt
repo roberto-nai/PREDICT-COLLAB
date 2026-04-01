@@ -1,0 +1,6 @@
+Flask
+tensorflow==2.15
+keras<3
+scikit-learn
+pm4py
+PyYAML

@@ -1,0 +1,444 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar {
+    background-color: #229954; /* Verde esmeralda oscuro */
+    padding: 10px;
+    text-align: left; /* Alineación a la izquierda */
+}
+
+.navbar a {
+    color: #fff;
+    text-decoration: none;
+    margin: 0 10px;
+    transition: color 0.3s ease;
+}
+
+.navbar a:hover {
+    color: #ddd;
+}
+
+
+.inicio h2 {
+    padding-left: 9%;
+}
+.inicio .image-container {
+    display: flex;
+    justify-content: center; /* Centrar horizontalmente */
+    align-items: flex-start; /* Alinear al inicio verticalmente */
+    flex-wrap: wrap;
+    padding: 20px;
+    max-width: 1200px; /* Anchura máxima del contenedor */
+    margin: 0 auto; /* Centrar horizontalmente */
+    border: 2px solid #229954; /* Verde esmeralda oscuro */
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.inicio .image-container div {
+    flex-basis: calc(33.33% - 40px); /* Ajuste del margen entre imágenes */
+    margin-bottom: 20px;
+    margin-left: 20px; /* Espacio horizontal entre imágenes */
+    margin-right: 20px; /* Espacio horizontal entre imágenes */
+    position: relative;
+
+}
+
+.inicio .image-container img {
+    width: 100px; /* Tamaño fijo para todas las imágenes */
+    height: 100px; /* Tamaño fijo para todas las imágenes */
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+    display: block; /* Convertir la imagen en un bloque para centrar */
+    margin: 0 auto; /* Centrar horizontalmente */
+    padding-left: 30px;
+}
+
+.inicio .image-container img:hover {
+    transform: scale(1.05);
+}
+
+.inicio .caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    color: #000; /* Color de texto negro */
+    padding: 10px;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    width: 100%; /* Ancho del contenedor de texto al 100% */
+    text-align: left; /* Alineación del texto al centro */
+    display:flex;
+}
+
+.inicio .caption p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.boton-nuevo
+{
+    line-height: 1.5;
+    ;
+}
+
+.boton-nuevo button
+{
+    font-size: 14px;
+    line-height: 1.5;
+    padding: 5px 10px;
+    background-color: #229954; /* Verde esmeralda oscuro */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    margin-top: 5px;
+    cursor: pointer;
+}
+
+.inicio .caption button {
+    padding: 5px 10px;
+    background-color: #229954; /* Verde esmeralda oscuro */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.inicio .caption button:hover {
+    background-color: #1e8449;
+    /* Verde esmeralda más oscuro */
+}
+
+
+
+.titulosPantallas {
+    margin-left: 20px; /* Puedes ajustar el valor según tus necesidades */
+}
+
+/* Estilos para el formulario con clase "modelo" y "predicciones" */
+form.modelo,
+form.predicciones {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 2px solid #229954; /* Cambio a un borde sólido verde */
+    border-radius: 8px;
+    background-color: #fff; /* Cambio a fondo blanco */
+    color: #333; /* Cambio de color de texto a oscuro */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+form.modelo h1,
+form.predicciones h1 {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+    margin-left: 20px; /* Agregar margen a la izquierda */
+}
+
+form.modelo label,
+form.predicciones label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+form.modelo input[type="text"],
+form.modelo select,
+form.predicciones input[type="text"],
+form.predicciones select {
+    width: calc(100% - 22px); /* Resta del padding horizontal */
+    padding: 10px; /* Ajuste del padding */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    background-color: #f9f9f9; /* Color de fondo para inputs y selects */
+    box-sizing: border-box; /* Incluye el padding y borde en el ancho total */
+}
+
+form.modelo .botonesforms,
+form.predicciones .botonesforms {
+    padding: 10px 20px;
+    background-color: #229954 !important; /* Agregar !important */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+form.modelo .botonesforms:hover,
+form.predicciones .botonesforms:hover {
+    background-color: #1e8449 !important; /* Agregar !important */
+}
+
+form.modelo label,
+form.predicciones label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold; /* Texto en negrita */
+}
+
+/* Estilos CSS para la tabla */
+.tablaModelos {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #f4f4f4; /* Fondo gris claro */
+    color: #333; /* Color de texto oscuro */
+}
+
+.tablaModelos caption {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    color: #229954; /* Color verde esmeralda */
+}
+
+.tablaModelos th,
+.tablaModelos td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd; /* Borde inferior gris claro */
+}
+
+.tablaModelos th {
+    background-color: #229954; /* Fondo verde esmeralda */
+    color: #fff; /* Color de texto blanco */
+}
+
+.tablaModelos tbody tr:nth-child(even) {
+    background-color: #f9f9f9; /* Fondo gris claro alternado */
+}
+
+.tablaModelos tbody tr:hover {
+    background-color: #e6e6e6; /* Fondo gris claro al pasar el mouse */
+}
+
+.tablaModelos td button {
+    padding: 5px 10px;
+    background-color: #229954; /* Verde esmeralda oscuro */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.tablaModelos td button:hover {
+    background-color: #1e8449; /* Verde esmeralda más oscuro al pasar el mouse */
+}
+
+/* Estilos para el contenedor de la tabla */
+.contenedor-tabla {
+    max-width: 1200px; /* Ancho máximo del contenedor */
+    margin: 20px auto; /* Centrar horizontalmente */
+    padding: 20px;
+    border: 2px solid #229954; /* Borde sólido verde */
+    border-radius: 8px; /* Borde redondeado */
+    background-color: #fff; /* Fondo blanco */
+    box-sizing: border-box; /* Incluye el borde en el ancho total */
+    overflow-x: auto; /* Agrega barra de desplazamiento horizontal si es necesario */
+}
+
+/* Estilos para el fondo detrás del popup */
+.background-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro semi-transparente */
+    z-index: 1000; /* Z-index superior al del popup */
+    display: none; /* Inicialmente oculto */
+}
+
+/* Estilos para el popup */
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px; /* Incrementa el ancho del popup */
+    background-color: white; /* Fondo blanco */
+    color: black; /* Texto negro */
+    padding: 20px;
+    border: 4px solid #229954; /* Incrementa el grosor del borde */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1001; /* Asegúrate de que el popup esté encima del overlay */
+}
+
+.popup p {
+    margin: 0;
+    font-size: 18px; /* Incrementa el tamaño del texto */
+    text-align: center;
+    font-weight: bold; /* Texto en negrita */
+}
+
+.popup .close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 5px;
+    cursor: pointer;
+    color: black; /* Botón de cierre negro */
+    font-size: 18px;
+}
+
+.popup .close:hover {
+    color: #f00; /* Color rojo al pasar el mouse */
+}
+
+/* Estilos para el overlay del spinner */
+
+
+.loading-spinner {
+    display: none; /* Oculto por defecto */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo negro con transparencia */
+    z-index: 1002; /* Asegúrate de que esté por encima del contenido */
+}
+
+.loading-spinner .spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 8px solid #f3f3f3; /* Fondo del spinner */
+    border-top: 8px solid #229954; /* Color del borde superior del spinner */
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 2s linear infinite;
+}
+
+.loading-spinner .cargandospinner {
+    position: relative;
+    top:60%;
+    left: 4%;
+    /*left: 50%;
+    width: 60px;
+    height: 60px;*/
+    text-align: center;
+    font-size: 40px;
+    color: #fff; /* Color del texto */
+}
+
+/* Animación del spinner */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Estilos CSS para la tabla Predicciones */
+.tablaPredicciones {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #f4f4f4; /* Fondo gris claro */
+    color: #333; /* Color de texto oscuro */
+}
+
+.tablaPredicciones caption {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    color: #229954; /* Color verde esmeralda */
+}
+
+.tablaPredicciones th,
+.tablaPredicciones td {
+    padding: 8px;
+    text-align: center;
+    border-bottom: 1px solid #ddd; /* Borde inferior gris claro */
+}
+
+.tablaPredicciones th {
+    background-color: #229954; /* Fondo verde esmeralda */
+    color: #fff; /* Color de texto blanco */
+}
+
+.tablaPredicciones tbody tr:nth-child(even) {
+    background-color: #f9f9f9; /* Fondo gris claro alternado */
+}
+
+.tablaPredicciones tbody tr:hover {
+    background-color: #e6e6e6; /* Fondo gris claro al pasar el mouse */
+}
+
+.tablaPredicciones td button {
+    padding: 5px 10px;
+    background-color: #229954; /* Verde esmeralda oscuro */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.tablaPredicciones td button:hover {
+    background-color: #1e8449; /* Verde esmeralda más oscuro al pasar el mouse */
+}
+
+/* Estilos para el contenedor de la tabla */
+.contenedor-tabla-predicciones {
+    max-width: 800px; /* Ancho máximo del contenedor */
+    margin: 0 auto; /* Centrar horizontalmente */
+    padding: 20px;
+    border: 2px solid #229954; /* Borde sólido verde */
+    border-radius: 8px; /* Borde redondeado */
+    background-color: #fff; /* Fondo blanco */
+    box-sizing: border-box; /* Incluye el borde en el ancho total */
+    overflow-x: auto; /* Agrega barra de desplazamiento horizontal si es necesario */
+}
+
+/* Estilos para el popup */
+.popupmetricas {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px; /* Ancho del popup */
+    background-color: white; /* Fondo blanco */
+    color: black; /* Texto negro */
+    padding: 20px;
+    border: 4px solid #229954; /* Color y grosor del borde */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1001; /* Asegúrate de que el popup esté encima del overlay */
+    overflow: auto; /* Para manejar el desbordamiento si el contenido es muy largo */
+}
+
+.popupmetricas pre {
+    margin: 0; /* Quitar márgenes por defecto */
+    font-size: 18px; /* Tamaño del texto */
+    white-space: pre-wrap; /* Mantener los espacios y saltos de línea */
+    text-align: left; /* Alinear texto a la izquierda */
+}
+
+.popupmetricas .close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 5px;
+    cursor: pointer;
+    color: black; /* Botón de cierre negro */
+    font-size: 18px;
+}
+
+.popupmetricas .close:hover {
+    color: #f00; /* Color rojo al pasar el mouse */
+}
+

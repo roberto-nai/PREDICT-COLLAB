@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predict-Collab / Predictions</title>
+    <link href="{{ url_for('static', filename='styles/style.css') }}" rel="stylesheet" />
+</head>
+
+<body class="predicciones">
+<div class="navbar">
+    <a href="{{ url_for('index') }}" class="inicio">Home</a>
+    <a href="{{ url_for('get_logs') }}" class="logs">Logs</a>
+    <a href="{{ url_for('get_modelos') }}" class="inicio">Models</a>
+    <a href="{{ url_for('pred') }}" class="inicio">Predictions</a>
+    <a href="{{ url_for('info') }}" class="inicio">FAQ</a>
+</div>
+    <h1 class="titulosPantallas">Make your predictions</h1>
+
+    <form action="/predictions" id="seleccionar" method="POST" class="predicciones" enctype="multipart/form-data">
+
+        <label for="proceso" class="modelo">Process:</label>
+        <select name="proceso" id="proceso" class="modelo" onchange="actualizarLogs()" required>
+            <option value="" disabled {% if not proceso_seleccionado %}selected{% endif %}>Select a process</option>
+            {% for proceso in procesos %}
+            <option value="{{ proceso }}" {% if proceso_seleccionado == proceso %}selected{% endif %} class="modelo">{{ proceso }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="log" class="modelo">Log:</label>
+        <select name="log" id="log" class="modelo" onchange="actualizarTiposPrediccion()" required>
+            <option value="" disabled {% if not log_seleccionado %}selected{% endif %}>Select a log</option>
+            <!-- Las opciones se llenarán dinámicamente en JavaScript -->
+        </select>
+
+        <label for="tipoPred" class="modelo">Prediction type:</label>
+        <select name="tipoPred" id="tipoPred" class="modelo" onchange="actualizarModelos()" required>
+            <option value="" disabled {% if not tipo_prediccion_seleccionado %}selected{% endif %}>Select a prediction type</option>
+            <!-- Las opciones se llenarán dinámicamente en JavaScript -->
+        </select>
+
+        <label for="model" class="modelo">Model:</label>
+        <select name="model" id="model" class="modelo" required>
+            <option value="" disabled {% if not modelo_seleccionado %}selected{% endif %}>Select a model</option>
+            <!-- Las opciones se llenarán dinámicamente en JavaScript -->
+        </select>
+
+        <p class="predicciones">
+            <label for="trazaCsv" class="predicciones">Trace:</label>
+            <input type="file" id="trazaCsv" name="trazaCsv" accept=".csv, .xes" class="predicciones" required title ="Only .csv and .xes files are accepted">
+        </p>
+        <button type="submit" class="botonesforms">Make prediction</button>
+    </form>
+
+<!-- Popup -->
+<div id="popup" class="popup">
+    <span class="close" onclick="closePopup()">&times;</span>
+    <p><strong></strong></p>
+</div>
+
+<script>
+
+    const logSeleccionado = "{{ log_seleccionado }}";
+    const tipoPrediccionSeleccionado = "{{ tipo_prediccion_seleccionado }}";
+    const modeloSeleccionado = "{{ modelo_seleccionado }}";
+
+    function actualizarLogs() {
+        const procesoSeleccionado = document.getElementById("proceso").value;
+        const logSelect = document.getElementById("log");
+        const predSelect = document.getElementById("tipoPred");
+        const modeloSelect = document.getElementById("model");
+
+        logSelect.innerHTML = '<option value="" disabled selected>Select a log</option>';
+        predSelect.innerHTML = '<option value="" disabled selected>Select a prediction type</option>';
+        modeloSelect.innerHTML = '<option value="" disabled selected>Select a model</option>';
+
+        if (procesoSeleccionado === "") {
+            return;
+        }
+
+        fetch(`/obtener_logs?proceso=${procesoSeleccionado}`)
+            .then(response => response.json())
+            .then(data => {
+                logSelect.innerHTML = '<option value="" disabled selected>Select a log</option>';
+
+                data.logs.forEach(log => {
+                    const option = document.createElement("option");
+                    option.value = log;
+                    option.text = log;
+                    logSelect.appendChild(option);
+                });
+
+                if (logSeleccionado != "None") {
+                    logSelect.value = logSeleccionado;
+                    actualizarTiposPrediccion();
+                }
+            });
+    }
+
+    function actualizarTiposPrediccion() {
+        const procesoSeleccionado = document.getElementById("proceso").value;
+        const logSelect = document.getElementById("log").value;
+        const predSelect = document.getElementById("tipoPred");
+
+        if (procesoSeleccionado === "" || logSelect === "") {
+            return;
+        }
+
+        fetch(`/obtener_tiposPrediccion?proceso=${procesoSeleccionado}&log=${logSelect}`)
+            .then(response => response.json())
+            .then(data => {
+                predSelect.innerHTML = '<option value="" disabled selected>Select a prediction type</option>';
+
+                data.tiposPred.forEach(tipoPred => {
+                    const option = document.createElement("option");
+                    option.value = tipoPred;
+                    switch(tipoPred){
+                        case "NextActivity":
+                            option.text = "Next activity that is likely to occur in the process";
+                            break;
+                        case "ParticipantSend":
+                            option.text = "Next participant that is likely to send a message";
+                            break;
+                        case "ActivityParticipantSend":
+                            option.text = "Next participant that is likely to send a message (with activity)";
+                            break;
+                        case "ActivityParticipant":
+                            option.text = "Next activity that is likely to occur in the process and its participant";
+                            break;
+                        case "Participant":
+                            option.text = "Next participant that is likely to act";
+                            break;
+                        case "NextTime":
+                            option.text = "Time until the next event";
+                            break;
+                        case "NextTimeMessage":
+                            option.text = "Time until the next message to send";
+                            break;
+                        case "RemainingTime":
+                            option.text = "Process remaining time";
+                            break;
+                        case "RemainingTimeParticipant":
+                            option.text = "Participant remaining time";
+                            break;
+                    }
+                    predSelect.appendChild(option);
+                });
+
+                if (tipoPrediccionSeleccionado) {
+                    predSelect.value = tipoPrediccionSeleccionado;
+                    actualizarModelos();
+                }
+            });
+    }
+
+
+    function actualizarModelos() {
+        const procesoSeleccionado = document.getElementById("proceso").value;
+        const logSelect = document.getElementById("log").value;
+        const predSelect = document.getElementById("tipoPred").value;
+        const modeloSelect = document.getElementById("model");
+
+        if (predSelect === "") {
+            return;
+        }
+
+        fetch(`/obtener_modelos?proceso=${procesoSeleccionado}&log=${logSelect}&tipoPred=${predSelect}`)
+            .then(response => response.json())
+            .then(data => {
+                modeloSelect.innerHTML = '<option value="" disabled selected>Select a model</option>';
+
+                data.modelos.forEach(modelo => {
+                    const option = document.createElement("option");
+                    option.value = modelo;
+                    option.text = modelo;
+                    modeloSelect.appendChild(option);
+                });
+
+                if (modeloSeleccionado) {
+                    modeloSelect.value = modeloSeleccionado;
+                }
+            });
+    }
+    // Carga inicial de los valores seleccionados si existen
+    window.onload = function () {
+        if (logSeleccionado) {
+            actualizarLogs();
+        }
+        if (tipoPrediccionSeleccionado) {
+            actualizarTiposPrediccion();
+        }
+        if (modeloSeleccionado) {
+            actualizarModelos();
+        }
+    }
+
+    function openPopup() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const mensajeError = urlParams.get('mensaje_error');
+
+        const popup = document.getElementById('popup');
+        const popupText = popup.querySelector('p strong');
+
+        popupText.textContent = `${mensajeError}`;
+        popup.style.borderColor = "#ff0000";  // Rojo
+
+        // Muestra el popup
+        popup.style.display = "block";
+        document.getElementById("background-overlay").style.display = "block";
+
+    }
+     function closePopup() {
+        document.getElementById("popup").style.display = "none";
+        document.getElementById("background-overlay").style.display = "none";
+    }
+
+    // Verifica si hay mensajes flash y muestra el popup correspondiente
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            openPopup();
+        {% endif %}
+    {% endwith %}
+
+
+
+</script>
+
+
+
+
+</body>
+
+</html>

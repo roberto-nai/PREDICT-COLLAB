@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predict-Collab / FAQ</title>
+    <link href="{{ url_for('static', filename='styles/style.css') }}" rel="stylesheet" />
+
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background-color: #6db243;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+        .faq-container {
+            max-width: 800px;
+            margin: 20px auto;
+            background: #fff;
+            border: 2px solid #229954; /* Cambio a un borde sólido verde */
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .categories {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+        .category {
+            background: #229954;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            text-align: center;
+        }
+        .category:hover {
+             background-color: #1e8449;
+        }
+        .faq {
+            margin: 10px 0;
+        }
+        .faq-question {
+            display: flex;
+            justify-content: space-between; /* Espacio entre el texto y el símbolo */
+            align-items: center; /* Alinea verticalmente al centro */
+            background: #f4f4f4;
+            padding: 10px 15px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .faq-question:hover {
+            background: #e8e8e8;
+        }
+        .faq-answer {
+            padding: 10px 15px;
+            display: none;
+            background: #fafafa;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-top: 5px;
+        }
+        .active .faq-answer {
+            display: block;
+        }
+
+        .plus-symbol {
+            font-weight: normal;
+            color: #229954;
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+
+<!-- Menú superior -->
+
+<body>
+  <div class="navbar">
+    <a href="{{ url_for('index') }}" class="inicio">Home</a>
+    <a href="{{ url_for('get_logs') }}" class="logs">Logs</a>
+    <a href="{{ url_for('get_modelos') }}" class="inicio">Models</a>
+    <a href="{{ url_for('pred') }}" class="inicio">Predictions</a>
+    <a href="{{ url_for('info') }}" class="inicio">FAQ</a>
+</div>
+
+  <h1 class="titulosPantallas">Frequently Asked Questions</h1>
+
+<div class="faq-container">
+    <div class="categories">
+        <div class="category" onclick="filterCategory('all')">All</div>
+        <div class="category" onclick="filterCategory('general')">General</div>
+        <div class="category" onclick="filterCategory('logs')">Logs</div>
+        <div class="category" onclick="filterCategory('models')">Models</div>
+        <div class="category" onclick="filterCategory('predictions')">Predictions</div>
+    </div>
+
+    <div class="faqs">
+        <div class="faq general">
+            <div class="faq-question" onclick="toggleFaq(this)">What types of predictions are available? <span class="plus-symbol">+</span> </div>
+            <div class="faq-answer">
+                <ul>
+                    <li>
+                        <strong>Next activity that is likely to occur in the process:</strong>
+                        The prediction indicates the possible next activity.
+                    </li>
+                    <li>
+                        <strong>Next participant that is likely to send a message:</strong>
+                        The prediction indicates only the participant who is likely to send the next message.
+                    </li>
+                    <li>
+                        <strong>Next participant that is likely to send a message (with activity):</strong>
+                        The prediction indicates the activity and the participant corresponding to the possible next message.
+                    </li>
+                    <li>
+                        <strong>Next activity that is likely to occur in the process and its participant:</strong>
+                        The prediction indicates the possible next activity and the participant.
+                    </li>
+                    <li>
+                        <strong>Next participant that is likely to act:</strong>
+                        The prediction indicates only the participant who is likely to perform the next activity.
+                    </li>
+                    <li>
+                        <strong>Time until the next event:</strong>
+                        The prediction indicates the time remaining until the next event occurs.
+                    </li>
+                    <li>
+                        <strong>Time until the next message to send:</strong>
+                        The prediction indicates the time remaining until the next message is sent.
+                    </li>
+                    <li>
+                        <strong>Process remaining time:</strong>
+                        The prediction indicates the time remaining until the activities of the case are completed.
+                    </li>
+                    <li>
+                        <strong>Participant remaining time:</strong>
+                        The prediction indicates the time remaining until the participant's activities in the case are completed.
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="faq general">
+            <div class="faq-question" onclick="toggleFaq(this)">What format should the entered names follow?<span class="plus-symbol">+</span> </div>
+            <div class="faq-answer">The names for the log file, process (Logs management), and model (Models management) must comply with the format expressed by the regular expression:
+^[a-zA-Z0-9-_]+$</div>
+        </div>
+        <div class="faq logs">
+            <div class="faq-question" onclick="toggleFaq(this)">What do I need to upload a new log? <span class="plus-symbol">+</span></div>
+            <div class="faq-answer">Process name, description, and a file in CSV or XES format</div>
+        </div>
+        <div class="faq logs">
+            <div class="faq-question" onclick="toggleFaq(this)">Can I delete a log from the system?<span class="plus-symbol">+</span></div>
+            <div class="faq-answer">Yes, as long as it has no associated models</div>
+        </div>
+        <div class="faq logs">
+            <div class="faq-question" onclick="toggleFaq(this)">Is there any precondition for the log to generate a model?<span class="plus-symbol">+</span></div>
+            <div class="faq-answer">Yes, to generate the model correctly, the log must contain case identifiers (Case ID) and a timestamp (Time) associated with each event.
+The events in each trace must be ordered by their timestamp.</div>
+        </div>
+        <div class="faq logs">
+            <div class="faq-question" onclick="toggleFaq(this)">Can multiple logs be uploaded for the same process?<span class="plus-symbol">+</span></div>
+            <div class="faq-answer">Yes, as long as the associated files have different names</div>
+        </div>
+        <div class="faq models">
+            <div class="faq-question" onclick="toggleFaq(this)">What do I need to create a model?<span class="plus-symbol">+</span> </div>
+            <div class="faq-answer">A process must have been created and associated with an event log in the Logs management section.</div>
+        </div>
+        <div class="faq models">
+            <div class="faq-question" onclick="toggleFaq(this)">Can I modify a model?<span class="plus-symbol">+</span> </div>
+            <div class="faq-answer">No, it can be deleted and recreated, or a new model can be created with the desired characteristics.</div>
+        </div>
+        <div class="faq models">
+            <div class="faq-question" onclick="toggleFaq(this)">What is the "Time format" field used for when creating a model?<span class="plus-symbol">+</span> </div>
+            <div class="faq-answer">This field is used only for time predictions and is related to the unit in which the prediction result is expected.
+Keep in mind that in some processes, cases are completed in seconds or minutes, while others may take several days. Choose the option that best suits your reality.</div>
+        </div>
+         <div class="faq predictions">
+            <div class="faq-question" onclick="toggleFaq(this)">What do I need to create a prediction?<span class="plus-symbol">+</span> </div>
+            <div class="faq-answer">An event log associated with the process must be loaded, a model for the desired prediction must be generated, and a file of ongoing traces must be uploaded in the same format as the selected event log.</div>
+        </div>
+        <div class="faq predictions">
+            <div class="faq-question" onclick="toggleFaq(this)">Are the predictions made stored in the system?<span class="plus-symbol">+</span> </div>
+            <div class="faq-answer">No, but after making the prediction, it is possible to download the results.</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleFaq(element) {
+        element.parentElement.classList.toggle('active');
+    }
+
+    function filterCategory(category) {
+        const faqs = document.querySelectorAll('.faq');
+        faqs.forEach(faq => {
+            if (faq.classList.contains(category) || category === 'all') {
+                faq.style.display = 'block';
+            } else {
+                faq.style.display = 'none';
+            }
+        });
+    }
+
+    // Show all FAQs by default
+    filterCategory('all');
+</script>
+
+</body>
+</html>

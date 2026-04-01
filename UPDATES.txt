@@ -1,0 +1,45 @@
+# Project Updates Log
+
+## 2026-01-09
+- Updated README.md with project files description
+- Added config.yml for centralized application settings
+- Created ConfigLoader.py module to read YAML configuration
+- Modified server.py to load debug, port, host, and secret_key settings from config.yml
+- Added PyYAML dependency to requirements.txt
+- Centralized processing directory configuration: used 'processing' paths with get_processing_dir() function across all modules (server.py, Logs.py, Predicciones.py, PrediccionesTime.py, Modelos.py, FuncionesAuxiliares.py)
+- Centralized processing directory creation at application startup in server.py with automatic .gitkeep file generation
+- Enhanced .gitignore with comprehensive exclusions for system files, IDEs, Python artifacts, and processing directory (keeping only .gitkeep)
+- Added application logging to file with rotating file handler (configurable log_file in config.yml, defaults to app.log with 10MB max size and 5 backups)
+- Added event_log default column names to config.yml (caseid_col, activity_col, timestamp_col) and implemented auto-selection in model creation form
+  - Modified server.py: get_modelos() route now passes default column values from config.yml to modelos.html template
+  - Modified templates/modelos.html: added JavaScript logic to pre-select Case Id column, Activity column, and Time column with configured default values when creating models
+- Added configurable decimal places for prediction metrics display
+  - Added prediction.max_decimal_places setting to config.yml  
+  - Modified server.py: get_modelos() route now passes max_decimal_places from config to modelos.html template
+  - Modified templates/modelos.html: implemented formatMetric() function to round all displayed metrics (accuracy, f-score, precision, recall, MAE, MSE, RMSE) to the configured number of decimal places in openPopupMetricas()
+- Added event log statistics visualization in Logs section
+  - Modified server.py: added /obtener_estadisticas_log route to calculate log statistics using column names from config.yml (number of distinct cases, activities with frequencies, distinct values per column excluding case ID and timestamp)
+  - Modified templates/logs.html: added "Log Statistics" section with interactive display that shows when clicking on a log row in the table; statistics are sorted alphabetically and include file path information
+- Reordered Models table columns: Model column is now first, followed by Process, Log, and Prediction type
+  - Modified templates/modelos.html: changed table header and body order
+- Added case details visualization in Predictions section
+  - Modified server.py: added /obtener_detalle_caso route to retrieve complete event log and partial trace data for a selected case, using column names from config.yml (caseid_col and timestamp_col); includes automatic type conversion for case_id matching and NaN/NaT handling
+  - Modified server.py: pred() route now passes proceso, log, and filename to resultadoprediccion.html template
+  - Modified templates/resultadoprediccion.html: added interactive case details display with two sections (Complete Event Log and Partial Trace) that appear when clicking on a case in the results table; both sections show data sorted by timestamp
+
+## 2026-02-12
+- Fixed `existen_modelos` to use the configured processing directory via `get_processing_dir()` instead of the hardcoded `procesos` path
+- Updated TransformerBlock `call` signature to use `training=None` for Keras compatibility
+- Saved Keras models with the `.keras` extension and updated model loading paths accordingly
+
+## 2026-02-13
+- Fixed prediction model loading for custom Transformer layers (`TokenAndPositionEmbedding`, `TransformerBlock`) by making layers fully Keras-serializable (`register_keras_serializable`, `get_config`, `**kwargs` in constructors)
+- Updated prediction loading to use TensorFlow Keras with explicit `custom_objects` and `compile=False` to avoid deserialization/runtime errors during `/predictions`
+
+## 2026-03-30
+- Added model metrics export to CSV file
+  - Created `save_model_metrics_to_csv()` function in FuncionesAuxiliares.py to save model metrics to `models_metrics.csv` in each log folder (processing/process_name/log_name/)
+  - Modified Modelos.py: `prepare_model()` now automatically saves metrics after model training for both classification (Accuracy, F-Score, Precision, Recall) and regression (MAE, MSE, RMSE) tasks
+  - CSV structure includes: Timestamp, Process, File, Model_Name, Prediction_Type, and all metrics columns (non-applicable metrics marked with -1)
+  - Metrics are rounded according to `prediction.max_decimal_places` setting from config.yml
+  - Added `get_max_decimal_places()` function in ConfigLoader.py to retrieve decimal precision from configuration

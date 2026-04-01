@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predict-Collab / Models</title>
+    <link href="{{ url_for('static', filename='styles/style.css') }}" rel="stylesheet" />
+    <style>
+        label.hiddenColumn {
+            display: none !important;
+        }
+        .hiddenColumn {
+            display: none;
+        }
+    </style>
+    <!-- Agrega el enlace a DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <!-- Agrega jQuery (requerido por DataTables) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Agrega la librería DataTables -->
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+</head>
+
+<body>
+<div id="background-overlay" class="background-overlay"></div>
+
+<!-- Menú superior -->
+<div class="navbar">
+    <a href="{{ url_for('index') }}" class="inicio">Home</a>
+    <a href="{{ url_for('get_logs') }}" class="logs">Logs</a>
+    <a href="{{ url_for('get_modelos') }}" class="inicio">Models</a>
+    <a href="{{ url_for('pred') }}" class="inicio">Predictions</a>
+    <a href="{{ url_for('info') }}" class="inicio">FAQ</a>
+</div>
+
+<h1 class="titulosPantallas">Models management</h1>
+
+<form action="/creaModelo" id="crea" class="modelo">
+    <h2 class="titulos2Pantallas">Create and train a model</h2>
+
+    <label for="nombreModelo" id="nombreModeloLabel" class="modelo" >Model name:</label>
+    <input type="text" name="nombreModelo" id="nombreModelo" placeholder="Enter a model name" class="modelo" required />
+
+    <label for="proceso" class="modelo">Process:</label>
+    <select name="proceso" id="proceso" class="modelo" onchange="actualizarLogs()" required>
+        <option value="" disabled selected>Select a process</option>
+        {% for proceso in procesos %}
+        <option value="{{ proceso }}" {% if proceso_seleccionado == proceso %}selected{% endif %} class="modelo">{{ proceso }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="log" class="modelo">Log:</label>
+    <select name="log" id="log" class="modelo" onchange="actualizarColumnas()" required>
+        <option value="" disabled selected>Select a log</option>
+    </select>
+
+    <label for="tipoPred" class="modelo">Prediction type:</label>
+    <select name="tipoPred" id="tipoPred" class="modelo" required>
+        <option value="" disabled selected>Select a prediction type</option>
+        <option value="NextActivity" class="modelo">Next activity that is likely to occur in the process</option>
+        <option value="ParticipantSend" class="modelo">Next participant that is likely to send a message</option>
+        <option value="ActivityParticipantSend" class="modelo">Next participant that is likely to send a message(with activity)</option>
+        <option value="ActivityParticipant" class="modelo">Next activity that is likely to occur in the process and its participant</option>
+        <option value="Participant" class="modelo">Next participant that is likely to act</option>
+        <option value="NextTime" class="modelo">Time until the next event</option>
+        <option value="NextTimeMessage" class="modelo">Time until the next message to send</option>
+        <option value="RemainingTime" class="modelo">Process remaining time</option>
+        <option value="RemainingTimeParticipant" class="modelo">Participant remaining time</option>
+
+    </select>
+
+    <!-- style="display:none;"-->
+    <label for="FormatoT" id="FormatoTLabel" class="modelo" style="display:none;">Time format:</label>
+    <select name="FormatoT" id="FormatoT" class="modelo" style="display:none;" >
+        <option value="" disabled selected>Select time format</option>
+        <option value="1" class="modelo">Seconds</option>
+        <option value="60" class="modelo">Minutes</option>
+        <option value="3600" class="modelo">Hours</option>
+        <option value="86400" class="modelo">Days</option>
+    </select>
+
+    <label for="columnID" class="modelo">Case Id column:</label>
+    <select name="columnID" id="columnID" class="modelo" required>
+        <option value="" disabled selected>Select a column</option>
+    </select>
+
+    <label for="columnT" class="modelo">Time column:</label>
+    <select name="columnT" id="columnT" class="modelo" required>
+        <option value="" disabled selected>Select a column</option>
+    </select>
+
+    <label for="column1" id="labelColumn1" class="hiddenColumn" >Columna1:</label>
+    <select name="column1" id="column1" class="hiddenColumn"  >
+        <option value="" disabled selected>Select a column</option>
+    </select>
+
+    <label for="column2" id="labelColumn2" class="hiddenColumn" >Columna2:</label>
+    <select name="column2" id="column2" class="hiddenColumn" >
+        <option value="" disabled selected>Select a column</option>
+    </select>
+
+    <label for="column3" id="labelColumn3" class="hiddenColumn">Columna3:</label>
+    <select name="column3" id="column3" class="hiddenColumn" >
+        <option value="" disabled selected>Select a column</option>
+    </select>
+
+
+    <label for="participante" id="participanteLabel" class="modelo" style="display:none;" disabled>Participant:</label>
+    <select name="participante" id="participante" class="modelo" style="display:none;"></select>
+
+    <button type="submit" class="botonesforms">Create model</button>
+</form>
+
+
+<div class="contenedor-tabla">
+    <h2 class="titulos2Pantallas">Select a model to make a prediction</h2>
+    <table id="tablaModelos" class="tablaModelos">
+        <caption>Available models</caption>
+        <thead>
+            <tr>
+                <th>Model</th>
+                <th>Process</th>
+                <th>Log</th>
+                <th>Prediction type</th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for model in models %}
+                <tr>
+                    <td>{{ model.modelo }}</td>
+                    <td>{{ model.proceso }}</td>
+                    <td>{{ model.log }}</td>
+                    <td>{{ model.texto_tipo_prediccion }}</td>
+                    <td>
+                        <form action="/models" method="post">
+                            <input type="hidden" name="model" value="{{ model.id }}">
+                            <input type="hidden" name="proceso" value="{{ model.proceso }}">
+                            <input type="hidden" name="log" value="{{ model.log }}">
+                            <input type="hidden" name="tipo_prediccion" value="{{ model.tipo_prediccion }}">
+                            <input type="hidden" name="modelo" value="{{ model.modelo }}">
+                            <button type="submit" class="botonesforms">Make a prediction</button>
+                        </form>
+                    </td>
+                    <td>
+                        <button type="button" class="botonesforms" onclick="openPopupMetricas('{{ model.modelo }}','{{ model.tipo_prediccion }}', '{{ model.met1 }}', '{{ model.met2 }}', '{{ model.met3 }}', '{{ model.met4 }}')">View metrics</button>
+                    </td>
+                    <td>
+                        <form id=eliminarmodelo action="/eliminar_modelo" method="post">
+                            <input type="hidden" name="model" value="{{ model.id }}">
+                            <input type="hidden" name="proceso" value="{{ model.proceso }}">
+                            <input type="hidden" name="log" value="{{ model.log }}">
+                            <input type="hidden" name="tipo_prediccion" value="{{ model.tipo_prediccion }}">
+                            <input type="hidden" name="modelo" value="{{ model.modelo }}">
+                            <button type="submit" id="botoneliminar" class="botonesforms">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Popup -->
+<div id="popup" class="popup">
+    <span class="close" onclick="closePopup()">&times;</span>
+    <p><strong></strong></p>
+</div>
+
+<!-- Popup metricas-->
+<div id="popupmetricas" class="popupmetricas">
+    <div class="close" onclick="closePopupMetricas()">&times;</div>
+    <pre id="popup-text"></pre>
+</div>
+
+<!-- Spinner -->
+<div id="loading-spinner" class="loading-spinner">
+    <div class="spinner"></div>
+    <div class="cargandospinner">Generating the model...</div>
+</div>
+
+<script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tipoPredSelect = document.getElementById('tipoPred');
+            const labelColumn1 = document.getElementById('labelColumn1');
+            const labelColumn2 = document.getElementById('labelColumn2');
+            const labelColumn3 = document.getElementById('labelColumn3');
+            const column1Select = document.getElementById('column1');
+            const column2Select = document.getElementById('column2');
+            const column3Select = document.getElementById('column3');
+
+            tipoPredSelect.addEventListener('change', function () {
+                // Ocultar todos los labels y selects
+                labelColumn1.classList.add('hiddenColumn');
+                labelColumn2.classList.add('hiddenColumn');
+                labelColumn3.classList.add('hiddenColumn');
+                column1Select.classList.add('hiddenColumn');
+                column2Select.classList.add('hiddenColumn');
+                column3Select.classList.add('hiddenColumn');
+                column1Select.removeAttribute('required');
+                column2Select.removeAttribute('required');
+                column3Select.removeAttribute('required');
+
+                // Mostrar y actualizar labels y selects según el tipo de predicción seleccionado
+                switch (this.value) {
+                    case 'NextActivity':
+                        labelColumn1.textContent = 'Activity column:';
+                        labelColumn1.classList.remove('hiddenColumn');
+                        column1Select.classList.remove('hiddenColumn');
+                        column1Select.setAttribute('required', 'required');
+                        break;
+                    case 'ParticipantSend':
+                        labelColumn1.textContent = 'Elem type column:';
+                        labelColumn2.textContent = 'Participant column:';
+                        labelColumn1.classList.remove('hiddenColumn');
+                        labelColumn2.classList.remove('hiddenColumn');
+                        column1Select.classList.remove('hiddenColumn');
+                        column2Select.classList.remove('hiddenColumn');
+                        column1Select.setAttribute('required', 'required');
+                        column2Select.setAttribute('required', 'required');
+                        break;
+                    case 'ActivityParticipantSend':
+                        labelColumn1.textContent = 'Elem type column:';
+                        labelColumn2.textContent = 'Activity column:';
+                        labelColumn3.textContent = 'Participant column:';
+                        labelColumn1.classList.remove('hiddenColumn');
+                        labelColumn2.classList.remove('hiddenColumn');
+                        labelColumn3.classList.remove('hiddenColumn');
+                        column1Select.classList.remove('hiddenColumn');
+                        column2Select.classList.remove('hiddenColumn');
+                        column3Select.classList.remove('hiddenColumn');
+                        column1Select.setAttribute('required', 'required');
+                        column2Select.setAttribute('required', 'required');
+                        column3Select.setAttribute('required', 'required');
+                        break;
+                    case 'ActivityParticipant':
+                        labelColumn1.textContent = 'Activity column:';
+                        labelColumn2.textContent = 'Participant column:';
+                        labelColumn1.classList.remove('hiddenColumn');
+                        labelColumn2.classList.remove('hiddenColumn');
+                        column1Select.classList.remove('hiddenColumn');
+                        column2Select.classList.remove('hiddenColumn');
+                        column1Select.setAttribute('required', 'required');
+                        column2Select.setAttribute('required', 'required');
+                        break;
+                    case 'Participant':
+                        labelColumn1.textContent = 'Participant column:';
+                        labelColumn1.classList.remove('hiddenColumn');
+                        column1Select.classList.remove('hiddenColumn');
+                        column1Select.setAttribute('required', 'required');
+                        break;
+                    case 'NextTime':
+                        labelColumn1.textContent = 'Activity column:';
+                        labelColumn1.classList.remove('hiddenColumn');
+                        column1Select.classList.remove('hiddenColumn');
+                        column1Select.setAttribute('required', 'required');
+                        break;
+                    case 'NextTimeMessage':
+                        labelColumn1.textContent = 'Elem type column:';
+                        labelColumn1.classList.remove('hiddenColumn');
+                        column1Select.classList.remove('hiddenColumn');
+                        column1Select.setAttribute('required', 'required');
+                        break;
+                    case 'RemainingTime':
+                        labelColumn1.textContent = 'Activity column:';
+                        labelColumn1.classList.remove('hiddenColumn');
+                        column1Select.classList.remove('hiddenColumn');
+                        column1Select.setAttribute('required', 'required');
+                        break;
+                    case 'RemainingTimeParticipant':
+                        labelColumn1.textContent = 'Participant column:';
+                        labelColumn1.classList.remove('hiddenColumn');
+                        column1Select.classList.remove('hiddenColumn');
+                        column1Select.setAttribute('required', 'required');
+                        break;
+                }
+            });
+        });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const tipoPredSelect = document.getElementById('tipoPred');
+        const labelFormatoT = document.getElementById('FormatoTLabel');
+        const selectFormatoT = document.getElementById('FormatoT');
+
+        tipoPredSelect.addEventListener('change', function () {
+            // Opciones que deben mostrar el segundo select y el label
+            const opcionesConFormato = ["NextTime", "NextTimeMessage", "RemainingTime", "RemainingTimeParticipant"];
+
+            if (opcionesConFormato.includes(this.value)) {
+                // Mostrar el select y el label si una de las opciones está seleccionada
+                labelFormatoT.style.display = 'inline';
+                selectFormatoT.style.display = 'inline';
+
+                selectFormatoT.setAttribute('required', 'required');
+            } else {
+                // Ocultar el select y el label en cualquier otro caso
+                labelFormatoT.style.display = 'none';
+                selectFormatoT.style.display = 'none';
+
+                // Reiniciar el valor del select
+                selectFormatoT.selectedIndex = 0;
+                selectFormatoT.removeAttribute('required');
+            }
+        });
+    });
+</script>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const tipoPredSelect = document.getElementById('tipoPred');
+    const participante = document.getElementById('participante');
+    const participanteLabel = document.getElementById('participanteLabel');
+
+    tipoPredSelect.addEventListener('change', function () {
+        if (this.value === 'RemainingTimeParticipant') {
+            // Mostrar el input y el label si "RemainingTimeParticipant" está seleccionado
+            participante.style.display = 'block';
+            participanteLabel.style.display = 'block';
+
+            // Agregar el atributo required dinámicamente
+            participante.setAttribute('required', 'required');
+        } else {
+            // Ocultar el participante y el label en cualquier otro caso
+            participante.style.display = 'none';
+            participanteLabel.style.display = 'none';
+
+            // Borrar el valor del input participante
+            participante.value = '';
+            participante.removeAttribute('required');
+        }
+    });
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const tipoPredSelect = document.getElementById('tipoPred');
+    const participante = document.getElementById('participante');
+    const participanteLabel = document.getElementById('participanteLabel');
+    const procesoSelect = document.getElementById('proceso');
+    const logSelect = document.getElementById('log');
+    const column1Select = document.getElementById('column1');
+
+
+    column1.addEventListener('change', function () {
+        if (tipoPredSelect.value === 'RemainingTimeParticipant') {
+            // Mostrar el select y el label si "RemainingTimeParticipant" está seleccionado
+            participante.style.display = 'block';
+            participanteLabel.style.display = 'block';
+
+            // Agregar el atributo required dinámicamente
+            participante.setAttribute('required', 'required');
+
+            // Obtener el proceso y el log seleccionados
+            const procesoSeleccionado = procesoSelect.value;
+            const logSeleccionado = logSelect.value;
+            const column1 = column1Select.value;
+
+            if (procesoSeleccionado && logSeleccionado) {
+                // Hacer una llamada al servidor para obtener los participantes
+                fetch(`/obtener_participantes?proceso=${procesoSeleccionado}&log=${logSeleccionado}&column1=${column1}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            // Si la respuesta no es OK, lanzar un error con el mensaje
+                            return response.json().then(errorData => {
+                                throw new Error(errorData.error || 'Error desconocido');
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Limpiar las opciones previas del select de participantes
+                        participante.innerHTML = '<option value="" disabled selected>Select the participant</option>';
+
+                        // Llenar el select con los participantes obtenidos
+                        data.participantes.forEach(participanteValor => {
+                            const option = document.createElement('option');
+                            option.value = participanteValor;
+                            option.text = participanteValor;
+                            participante.appendChild(option);
+                        });
+
+                        participante.removeAttribute('disabled');
+                    })
+                    .catch(error => {
+                         console.log(error.message);
+                         openPopup(error.message);
+                    });
+            }
+        } else {
+            // Ocultar el participante y el label en cualquier otro caso
+            participante.style.display = 'none';
+            participanteLabel.style.display = 'none';
+
+            // Limpiar el valor del select participante
+            participante.value = '';
+            participante.removeAttribute('required');
+        }
+    });
+});
+
+</script>
+
+
+<script>
+    const logSeleccionado = "{{ log_seleccionado }}"; // Pasar el valor de log_seleccionado a JavaScript
+    const columnaSeleccionada = "{{ columna_seleccionada }}"; // Pasar el valor de columna_seleccionada a JavaScript
+    
+    // Default column names from configuration
+    const DEFAULT_CASEID_COL = "{{ default_caseid }}";
+    const DEFAULT_ACTIVITY_COL = "{{ default_activity }}";
+    const DEFAULT_TIMESTAMP_COL = "{{ default_timestamp }}";
+    const DEFAULT_PARTICIPANT_COL = "{{ default_participant }}";
+    const DEFAULT_ELEMENT_TYPE_COL = "{{ default_element_type }}";
+    const MAX_DECIMAL_PLACES = {{ max_decimal_places }};
+
+    function actualizarLogs() {
+        const procesoSeleccionado = document.getElementById("proceso").value;
+        const logSelect = document.getElementById("log");
+
+        if (procesoSeleccionado === "Select a process") {
+            return;
+        }
+
+        fetch(`/obtener_logs?proceso=${procesoSeleccionado}`)
+            .then(response => response.json())
+            .then(data => {
+                logSelect.innerHTML = '<option value="" disabled selected>Select a log</option>';
+
+                data.logs.forEach(log => {
+                    const option = document.createElement("option");
+                    option.value = log;
+                    option.text = log;
+                    logSelect.appendChild(option);
+                });
+
+                if (logSeleccionado) {
+                    logSelect.value = logSeleccionado;
+                    actualizarColumnas();
+                }
+            });
+    }
+
+    function actualizarColumnas() {
+        const procesoSeleccionado = document.getElementById("proceso").value;
+        const logSeleccionado = document.getElementById("log").value;
+
+        const columnIDSelect = document.getElementById("columnID");
+        const columnTSelect = document.getElementById("columnT");
+        const column1Select = document.getElementById("column1");
+        const column2Select = document.getElementById("column2");
+        const column3Select = document.getElementById("column3");
+
+        if (procesoSeleccionado === "Select a process" || logSeleccionado === "Select a log"
+            || logSeleccionado === "") {
+            return;
+        }
+
+        fetch(`/obtener_columnas?proceso=${procesoSeleccionado}&log=${logSeleccionado}`)
+            .then(response => response.json())
+            .then(data => {
+                const columnas = data.columnas;
+
+                // Función para llenar un select con las columnas
+                function llenarSelect(selectElement, columnas) {
+                    selectElement.innerHTML = '<option value="" disabled selected>Select a column</option>';
+
+                    columnas.forEach(columna => {
+                        const option = document.createElement("option");
+                        option.value = columna;
+                        option.text = columna;
+                        selectElement.appendChild(option);
+                    });
+                }
+
+                llenarSelect(columnIDSelect, columnas);
+                llenarSelect(columnTSelect, columnas);
+                llenarSelect(column1Select, columnas);
+                llenarSelect(column2Select, columnas);
+                llenarSelect(column3Select, columnas);
+
+                // Set default values from config if available
+                if (DEFAULT_CASEID_COL && columnas.includes(DEFAULT_CASEID_COL)) {
+                    columnIDSelect.value = DEFAULT_CASEID_COL;
+                }
+                if (DEFAULT_TIMESTAMP_COL && columnas.includes(DEFAULT_TIMESTAMP_COL)) {
+                    columnTSelect.value = DEFAULT_TIMESTAMP_COL;
+                }
+                
+                // Set default values based on prediction type
+                const tipoPred = document.getElementById('tipoPred').value;
+                
+                // Set default activity column
+                if (DEFAULT_ACTIVITY_COL && columnas.includes(DEFAULT_ACTIVITY_COL)) {
+                    if (tipoPred === 'NextActivity' || tipoPred === 'ActivityParticipant' || 
+                        tipoPred === 'NextTime' || tipoPred === 'RemainingTime') {
+                        column1Select.value = DEFAULT_ACTIVITY_COL;
+                    } else if (tipoPred === 'ActivityParticipantSend') {
+                        column2Select.value = DEFAULT_ACTIVITY_COL;
+                    }
+                }
+                
+                // Set default element type column
+                if (DEFAULT_ELEMENT_TYPE_COL && columnas.includes(DEFAULT_ELEMENT_TYPE_COL)) {
+                    if (tipoPred === 'ParticipantSend' || tipoPred === 'ActivityParticipantSend' || 
+                        tipoPred === 'NextTimeMessage') {
+                        column1Select.value = DEFAULT_ELEMENT_TYPE_COL;
+                    }
+                }
+                
+                // Set default participant column
+                if (DEFAULT_PARTICIPANT_COL && columnas.includes(DEFAULT_PARTICIPANT_COL)) {
+                    if (tipoPred === 'Participant' || tipoPred === 'RemainingTimeParticipant') {
+                        column1Select.value = DEFAULT_PARTICIPANT_COL;
+                    } else if (tipoPred === 'ParticipantSend' || tipoPred === 'ActivityParticipant') {
+                        column2Select.value = DEFAULT_PARTICIPANT_COL;
+                    } else if (tipoPred === 'ActivityParticipantSend') {
+                        column3Select.value = DEFAULT_PARTICIPANT_COL;
+                    }
+                }
+
+                // Seleccionar la columna previamente seleccionada, si existe
+                if (columnaSeleccionada) {
+                    columnIDSelect.value = columnaSeleccionada;
+                    columnTSelect.value = columnaSeleccionada;
+                    column1Select.value = columnaSeleccionada;
+                    column2Select.value = columnaSeleccionada;
+                    column3Select.value = columnaSeleccionada;
+                }
+            });
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const procesoSeleccionado = document.getElementById("proceso").value;
+        if (procesoSeleccionado) {
+            actualizarLogs();
+        }
+
+        const logSeleccionado = document.getElementById("log").value;
+        if (logSeleccionado) {
+            actualizarColumnas(); // Actualiza columnas si ya hay un log seleccionado
+        }
+    });
+
+    document.getElementById("log").addEventListener("change", actualizarColumnas);
+</script>
+
+
+<script>
+    $(document).ready(function () {
+        $('#tablaModelos').DataTable({
+            "paging": true,
+            "pageLength": 10,
+            "lengthMenu": [10, 25, 50, 75, 100],
+            "order": [],
+            "language": {
+                "lengthMenu": "Show _MENU_ records per page",
+                "zeroRecords": "No results found",
+                "info": "Showing page _PAGE_ of _PAGES_",
+                "infoEmpty": "No records available",
+                "infoFiltered": "(filtered from _MAX_ total records)",
+                "paginate": {
+                    "first": "First",
+                    "last": "Last",
+                    "next": "Next",
+                    "previous": "Previous"
+                }
+            }
+        });
+
+        // Agrega el evento submit para el formulario "crea"
+        $('#crea').on('submit', function (event) {
+            // Muestra el spinner al enviar el formulario
+            $('#loading-spinner').show();
+        });
+    });
+
+    function openPopupMetricas(modelo, tipoPred, met1, met2, met3, met4) {
+
+        const popup = document.getElementById('popupmetricas');
+        const popupText = document.getElementById('popup-text');
+        let textoMetricas;
+        
+        // Format numbers with configured decimal places
+        const formatMetric = (value) => {
+            const num = parseFloat(value);
+            return isNaN(num) ? value : num.toFixed(MAX_DECIMAL_PLACES);
+        };
+
+        if (["NextActivity", "Participant", "ActivityParticipant", "ParticipantSend", "ActivityParticipantSend"].includes(tipoPred)) {
+            textoMetricas = `Evaluation metrics for \'${modelo}\':\n\n` +
+                `Average accuracy across all prefixes:\n${formatMetric(met1)}\n\n` +
+                `Average f-score across all prefixes:\n${formatMetric(met2)}\n\n` +
+                `Average precision across all prefixes:\n${formatMetric(met3)}\n\n` +
+                `Average recall across all prefixes:\n${formatMetric(met4)}`;
+        } else {
+            textoMetricas = `Evaluation metrics for \'${modelo}\':\n\n` +
+                `Average MAE across all prefixes:\n${formatMetric(met1)}\n\n` +
+                `Average MSE across all prefixes:\n${formatMetric(met2)}\n\n` +
+                `Average RMSE across all prefixes:\n${formatMetric(met3)}\n\n`;
+        }
+
+        popupText.textContent = textoMetricas;
+
+        popup.style.display = "block";
+        document.getElementById("background-overlay").style.display = "block";
+    }
+
+    function closePopupMetricas() {
+        document.getElementById("popupmetricas").style.display = "none";
+        document.getElementById("background-overlay").style.display = "none";
+    }
+
+    function openPopup(error) {
+        const urlParams = new URLSearchParams(window.location.search);
+        let status;
+        const salida = urlParams.get('salida');
+        let mensajeError;
+        const eliminar = urlParams.get('eliminar');
+
+
+         if ((!error) && (eliminar === null || eliminar === "")){
+            mensajeError = 'Error al crear el modelo: ' + urlParams.get('mensaje_error');
+            status = urlParams.get('status');
+        } else if (eliminar === null || eliminar === ""){
+            mensajeError = error;
+            status = 'ERROR';
+        } else {
+            mensajeError = urlParams.get('mensaje_error');
+            status = urlParams.get('status');
+        }
+
+
+        console.log('error ' + error)
+        console.log('mensajeError ' + mensajeError)
+
+        const popup = document.getElementById('popup');
+        const popupText = popup.querySelector('p strong');
+
+        if ((status === 'OK') && (eliminar)) {
+            // popupText.textContent = `El modelo ${salida} se ha eliminado correctamente`; 
+            popupText.textContent = `The model \'${salida}\' has been successfully deleted`;
+        } else if (status === 'OK') {
+            // popupText.textContent = `El modelo ${salida} se ha creado correctamente`;
+            popupText.textContent = `The model \'${salida}\' has been created successfully`;
+        } else if (status === 'ERROR') {
+            popupText.textContent = `${mensajeError}`;
+            popup.style.borderColor = "#ff0000";  // Rojo
+        }
+
+        // Muestra el popup
+        popup.style.display = "block";
+        document.getElementById("background-overlay").style.display = "block";
+    }
+
+    function closePopup() {
+        document.getElementById("popup").style.display = "none";
+        document.getElementById("background-overlay").style.display = "none";
+    }
+
+    function confirmarAccion(event) {
+        event.preventDefault(); // Prevenir el envío inmediato del formulario
+        const confirmacion = confirm("Are you sure you want to complete this action?");
+
+        if (confirmacion) {
+            // Envía el formulario correspondiente al botón presionado
+            const form = event.target.closest('form'); // Encuentra el formulario más cercano
+            if (form) {
+                form.submit(); // Envía el formulario
+            }
+        }
+    }
+
+    window.onload = function() {
+        const buttons = document.querySelectorAll('#tablaModelos form[action="/eliminar_modelo"] button'); // Selecciona todos los botones de eliminar
+        buttons.forEach(button => {
+            button.addEventListener('click', confirmarAccion); // Adjunta el evento a cada botón
+        });
+    };
+
+
+// Verifica si hay mensajes flash y muestra el popup correspondiente
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            openPopup();
+        {% endif %}
+    {% endwith %}
+</script>
+</body>
+</html>

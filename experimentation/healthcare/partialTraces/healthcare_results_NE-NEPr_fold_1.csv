@@ -1,0 +1,21 @@
+Case,Next activity that is likely to occur in the process
+case_149,send blood sample
+case_154,send results
+case_174,analyse blood sample
+case_184,admit patient
+case_199,send admission info
+case_214,examine patient
+case_229,require patient admission
+case_259,send results
+case_29,receive admission info
+case_324,analyse blood sample
+case_349,receive disease info
+case_374,require patient admission
+case_394,send results
+case_399,send blood sample
+case_414,receive disease info
+case_419,create medical record
+case_44,analyse blood sample
+case_459,blood draw
+case_69,send results
+case_99,send blood sample

@@ -1,0 +1,32 @@
+# Application Configuration
+
+# Output directories
+directories:
+  # Directory for processing outputs and results
+  processing: "processing"
+  # Directory for uploaded trace files (staging area)
+  staging: "trazas"
+
+# Application settings
+app:
+  debug: true
+  port: 8000
+  host: "127.0.0.1"
+  secret_key: "clavesecreta???"
+  log_file: "app.log"
+
+# Default event log column names
+event_log:
+  caseid_col: "case:concept:name"
+  activity_col: "concept:name"
+  timestamp_col: "time:timestamp"
+  participant_col: "collab:participant"
+  element_type_col: "collab:elemType"
+
+csv_settings:
+  delimiter: "," # Delimiter for CSV files
+  encoding: "utf-8" # Encoding for CSV files
+  
+# Prediction settings
+prediction:
+  max_decimal_places: 5 # Maximum decimal places to display in prediction results

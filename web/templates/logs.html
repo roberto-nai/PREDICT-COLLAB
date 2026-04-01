@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predict-Collab / Logs</title>
+    <link href="{{ url_for('static', filename='styles/style.css') }}" rel="stylesheet" />
+     <!-- Agrega el enlace a DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <!-- Agrega jQuery (requerido por DataTables) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Agrega la librería DataTables -->
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+</head>
+
+<body class="logs">
+<div id="background-overlay" class="background-overlay"></div>
+
+<div class="navbar">
+    <a href="{{ url_for('index') }}" class="inicio">Home</a>
+    <a href="{{ url_for('get_logs') }}" class="logs">Logs</a>
+    <a href="{{ url_for('get_modelos') }}" class="inicio">Models</a>
+    <a href="{{ url_for('pred') }}" class="inicio">Predictions</a>
+    <a href="{{ url_for('info') }}" class="inicio">FAQ</a>
+</div>
+    <h1 class="titulosPantallas">Logs management</h1>
+    <!--lo que había antes
+    <h1>{{ title }}</h1>
+    <p>{{ status }}</p>
+    <p> Modelo: {{ modelo }}</p> -->
+
+<form action="/Cargarlogs" id="seleccionar" method="POST" class="modelo" enctype="multipart/form-data">
+    <h2 class="titulos2Pantallas">Upload your event log</h2>
+    <p class="logs">
+        <label for="nombreProceso" class="modelo">Process:</label>
+        <span class="logs" style="display: block; margin-top: 6px; font-style: italic; color: #666;">Info: select 'Other (please specify)' to upload a new event log file.</span>
+        <br/>
+        <select name="nombreProceso" id="nombreProceso" class="modelo" onchange="mostrarCampoTexto()" required>
+            <option value="" disabled selected>Select a process</option>
+            {% for proceso in procesos %}
+            <option value="{{ proceso }}" class="modelo">{{ proceso }}</option>
+            {% endfor %}
+            <option value="otro">Other (please specify)</option>
+        </select>
+
+        <div id="campoNuevoProceso" style="display: none;">
+            <label for="nuevoProceso" class="modelo">Event log name:</label>
+            <input type="text" id="nuevoProceso" name="nuevoProceso" class="modelo" placeholder="Enter the event log name" required>
+        </div>
+
+        <label for="descripcionLog" class="predicciones">Event log description:</label>
+        <input type="text" name="descripcionLog" id="descripcionLog" placeholder="Enter the event log description" class="logs" required/>
+
+        <label for="logCsv" class="predicciones">Event log file (CSV or XES):</label>
+        <input type="file"  id="logCsv" name="logCsv" accept=".csv, .xes" class="logs" required title="Only .csv and .xes files are accepted">
+        <br /><br />
+        <span class="logs" style="display: block; margin-top: 6px; font-style: italic; color: #666;">Info: only CSV files separated by '{{ csv_delimiter }}' are accepted.</span>
+    </p>
+    <button type="submit" class="botonesforms">Save log</button>
+</form>
+
+
+<div class="contenedor-tabla">
+    <h2 class="titulos2Pantallas">Select an event log to create a model</h2>
+    <table id="tablaLogs" class="tablaModelos">
+        <caption>Available logs</caption>
+        <thead>
+            <tr>
+                <th>Process</th>
+                <th>Log</th>
+                <th>Description</th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in logs %}
+                <tr>
+                    <td>{{ log.nombreProceso }}</td>
+                    <td>{{ log.log }}</td>
+                    <td>{{ log.descripcionLog }}</td>
+                    <td>
+                        <form action="/logs" method="post">
+                            <input type="hidden" name="proceso" value="{{ log.nombreProceso }}">
+                            <input type="hidden" name="log" value="{{ log.log }}">
+                            <button type="submit" class="botonesforms">Create model</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form action="/descarga_log" method="get">
+                            <input type="hidden" name="proceso" value="{{ log.nombreProceso }}">
+                            <input type="hidden" name="log" value="{{ log.log }}">
+                            <button type="submit" class="botonesforms">Download</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form id=eliminarlog action="/eliminar_log" method="get">
+                            <input type="hidden" name="proceso" value="{{ log.nombreProceso }}">
+                            <input type="hidden" name="log" value="{{ log.log }}">
+                            <button type="submit" id=botoneliminar class="botonesforms">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p style="margin-top: 15px; font-style: italic; color: #666;">Click on a log name to view its statistics</p>
+</div>
+
+<!-- Log Statistics Section -->
+<div id="log-statistics" class="contenedor-tabla" style="display: none;">
+    <h2 class="titulos2Pantallas">Log Statistics</h2>
+    <div class="modelo" style="padding: 20px; background-color: #f9f9f9; border-radius: 5px;">
+        <div id="statistics-content">
+            <p><strong>Select a log from the table above to view its statistics</strong></p>
+        </div>
+    </div>
+</div>
+
+<!-- Popup -->
+<div id="popup" class="popup">
+    <span class="close" onclick="closePopup()">&times;</span>
+    <p><strong></strong></p>
+</div>
+
+<script>
+    function actualizarLogs() {
+        const procesoSeleccionado = document.getElementById("proceso").value;
+        const logSelect = document.getElementById("log");
+
+        fetch(`/obtener_logs?proceso=${procesoSeleccionado}`)
+            .then(response => response.json())
+            .then(data => {
+                // Limpiar el select de logs
+                logSelect.innerHTML = '<option disabled selected>Select a log</option>';
+
+                // Llenar el select de logs con los datos recibidos
+                data.logs.forEach(log => {
+                    const option = document.createElement("option");
+                    option.value = log;
+                    option.text = log;
+                    logSelect.appendChild(option);
+                });
+            });
+    }
+</script>
+
+<script>
+    function mostrarCampoTexto() {
+        var selectProceso = document.getElementById('nombreProceso');
+        var campoOtro = document.getElementById('campoNuevoProceso');
+        var inputOtroProceso = document.getElementById('nuevoProceso');
+
+        // Mostrar el campo de texto si se selecciona "Otro"
+        if (selectProceso.value === 'otro') {
+            campoOtro.style.display = 'block';
+            inputOtroProceso.required = true; // Hacer que sea requerido si se selecciona "Otro"
+        } else {
+            campoOtro.style.display = 'none';
+            inputOtroProceso.required = false; // No requerido si se selecciona otra opción
+            inputOtroProceso.value = ''; // Limpiar el campo de texto si se oculta
+        }
+    }
+
+    function openPopup(error) {
+        const urlParams = new URLSearchParams(window.location.search);
+        let status;
+        let mensajeError;
+        const salida = urlParams.get('salida');
+        const extension = urlParams.get('extension'); //segun la extension del archivo cambia el mensaje del pop up
+
+        const eliminar = urlParams.get('eliminar');
+
+
+
+        if ((!error) && (eliminar === null)){
+            mensajeError = 'Error uploading log: ' + urlParams.get('mensaje_error');
+            status = urlParams.get('status');
+        } else if (eliminar === null){
+            mensajeError = error;
+            status = 'ERROR';
+        } else {
+            mensajeError = urlParams.get('mensaje_error');
+            status = urlParams.get('status');
+        }
+
+        console.log('salida '+ status)
+        console.log('extension ' + extension)
+        console.log('status '+ status)
+        console.log('error '+ error)
+        console.log('mensajeError '+ mensajeError)
+
+        const popup = document.getElementById('popup');
+        const popupText = popup.querySelector('p strong');
+
+        if ((status === 'OK') && (eliminar)) {
+            popupText.textContent = `Log '${salida}' has been successfully deleted`;
+        }
+        else if (status === 'OK') {
+            if (extension === 'xes') {
+                popupText.textContent = `Log '${salida}' has been successfully saved in csv format.`;
+            } else {
+                popupText.textContent = `Log '${salida}' has been successfully saved.`;
+            }
+
+        } else if (status === 'ERROR') {
+            popupText.textContent = `${mensajeError}`;
+            popup.style.borderColor = "#ff0000";  // Rojo
+        }
+
+        // Muestra el popup
+        popup.style.display = "block";
+        document.getElementById("background-overlay").style.display = "block";
+}
+
+
+    function closePopup() {
+        document.getElementById("popup").style.display = "none";
+        document.getElementById("background-overlay").style.display = "none";
+    }
+
+     function confirmarAccion(event) {
+        event.preventDefault(); // Prevenir el envío inmediato del formulario
+        const confirmacion = confirm("Are you sure you want to complete this action?");
+
+        if (confirmacion) {
+            // Envía el formulario correspondiente al botón presionado
+            const form = event.target.closest('form'); // Encuentra el formulario más cercano
+            if (form) {
+                form.submit(); // Envía el formulario
+            }
+        }
+    }
+
+    window.onload = function() {
+        const buttons = document.querySelectorAll('#tablaLogs form[action="/eliminar_log"] button'); // Selecciona todos los botones de eliminar
+        buttons.forEach(button => {
+            button.addEventListener('click', confirmarAccion); // Adjunta el evento a cada botón
+        });
+    };
+
+    // Verifica si hay mensajes flash y muestra el popup correspondiente
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            openPopup();
+        {% endif %}
+    {% endwith %}
+</script>
+
+<script>
+    $(document).ready(function() {
+        $('#tablaLogs').DataTable({
+            "paging": true,
+            "pageLength": 10,
+            "lengthMenu": [10, 25, 50, 75, 100],
+            "order": [],
+            "language": {
+                "lengthMenu": "Show _MENU_ records per page",
+                "zeroRecords": "No results found",
+                "info": "Showing page _PAGE_ of _PAGES_",
+                "infoEmpty": "No records available",
+                "infoFiltered": "(filtered from _MAX_ total records)",
+                "paginate": {
+                    "first": "First",
+                    "last": "Last",
+                    "next": "Next",
+                    "previous": "Previous"
+                }
+            }
+        });
+        
+        // Add click event to table rows to show statistics
+        $('#tablaLogs tbody').on('click', 'tr', function() {
+            const proceso = $(this).find('td:eq(0)').text();
+            const log = $(this).find('td:eq(1)').text();
+            
+            if (proceso && log) {
+                loadLogStatistics(proceso, log);
+            }
+        });
+    });
+    
+    function loadLogStatistics(proceso, log) {
+        const statisticsSection = document.getElementById('log-statistics');
+        const statisticsContent = document.getElementById('statistics-content');
+        
+        // Show loading message
+        statisticsContent.innerHTML = '<p><strong>Loading statistics...</strong></p>';
+        statisticsSection.style.display = 'block';
+        
+        fetch(`/obtener_estadisticas_log?proceso=${encodeURIComponent(proceso)}&log=${encodeURIComponent(log)}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to load statistics');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                
+                let html = `<h3 style="margin-top: 0;"><strong>Statistics for log:</strong> <span style="font-weight: normal;">${log}</span></h3>`;
+                html += `<p style="color: #666; font-size: 0.9em; margin-top: 1px;">Path: processing/${proceso}/${log}/${log}</p>`;
+                
+                // Number of distinct cases
+                html += `<p><strong>Number of distinct cases:</strong> ${data.num_cases}</p>`;
+                
+                // Activities with frequencies
+                html += '<p><strong>Distinct activities and their frequencies:</strong></p>';
+                html += '<ul style="margin-left: 20px;">';
+                const activities = Object.entries(data.activities).sort((a, b) => b[1] - a[1]);
+                activities.forEach(([activity, count]) => {
+                    html += `<li>${activity}: <strong>${count}</strong></li>`;
+                });
+                html += '</ul>';
+                
+                // Column statistics - sorted alphabetically by column name
+                html += '<p><strong>Columns and their distinct values:</strong></p>';
+                const columns = Object.entries(data.columns_stats).sort((a, b) => a[0].localeCompare(b[0]));
+                if (columns.length > 0) {
+                    columns.forEach(([column, values]) => {
+                        if (typeof values === 'string') {
+                            html += `<p style="margin-left: 20px;"><strong>${column}:</strong> ${values}</p>`;
+                        } else {
+                            // Sort values alphabetically
+                            const sortedValues = values.sort((a, b) => a.localeCompare(b));
+                            html += `<p style="margin-left: 20px;"><strong>${column}:</strong> ${sortedValues.join(', ')}</p>`;
+                        }
+                    });
+                } else {
+                    html += '<p style="margin-left: 20px;">No additional columns found</p>';
+                }
+                
+                statisticsContent.innerHTML = html;
+            })
+            .catch(error => {
+                statisticsContent.innerHTML = `<p style="color: red;"><strong>Error loading statistics:</strong> ${error.message}</p>`;
+            });
+    }
+</script>
+
+
+
+</body>
+
+</html>

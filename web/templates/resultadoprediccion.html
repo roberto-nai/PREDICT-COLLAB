@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predict-Collab / Prediction Results</title>
+    <link href="{{ url_for('static', filename='styles/style.css') }}" rel="stylesheet" />
+</head>
+
+<body class="predicciones">
+<div class="navbar">
+    <a href="{{ url_for('index') }}" class="inicio">Home</a>
+    <a href="{{ url_for('get_logs') }}" class="logs">Logs</a>
+    <a href="{{ url_for('get_modelos') }}" class="inicio">Models</a>
+    <a href="{{ url_for('pred') }}" class="inicio">Predictions</a>
+    <a href="{{ url_for('info') }}" class="inicio">FAQ</a>
+</div>
+    <h1 class="titulosPantallas">Prediction Results</h1>
+    <!--lo que había antes
+    <h1>{{ title }}</h1>
+    <p>{{ status }}</p>
+    <p> Modelo: {{ modelo }}</p> -->
+
+    <!-- Tabla de modelos -->
+<div class="contenedor-tabla-predicciones">
+   <table id="tablaResultados" class="tablaPredicciones">
+       <caption>Prediction Results</caption>
+       <thead>
+           <tr>
+               <th>Case</th>
+               <th>
+                   {% if tipoPred == 'NextActivity' %}
+                       Next activity that is likely to occur in the process
+                   {% elif tipoPred == 'ParticipantSend' %}
+                       Next participant that is likely to send a message
+                   {% elif tipoPred == 'ActivityParticipantSend' %}
+                       Next participant that is likely to send a message(with activity)
+                   {% elif tipoPred == 'ActivityParticipant' %}
+                       Next activity that is likely to occur in the process and its participant
+                   {% elif tipoPred == 'Participant' %}
+                       Next participant that is likely to act
+                   {% elif tipoPred == 'NextTime' %}
+                       Time until the next event
+                   {% elif tipoPred == 'NextTimeMessage' %}
+                       Time until the next message to send
+                   {% elif tipoPred == 'RemainingTime' %}
+                       Process remaining time
+                   {% elif tipoPred == 'RemainingTimeParticipant' %}
+                       Participant remaining time: {{ participant }}
+                   {% endif %}
+               </th>
+           </tr>
+       </thead>
+       <tbody>
+           {% for pred in preds %}
+               <tr>
+                   <td>{{ pred[0] }}</td>
+                   <td>{{ pred[1] }}</td>
+               </tr>
+           {% endfor %}
+       </tbody>
+   </table>
+   <br />
+   <div class="contenedor-boton">
+       <p style="margin-bottom: 10px; color: #333; font-size: 0.9em;">
+           <strong>Input file for prediction:</strong> {{ filename }}
+       </p>
+       <button id="download-btn" class="botonesforms" style="background-color: #229954 !important; color: white;">Download results</button>
+   </div>
+   <p style="margin-top: 15px; font-style: italic; color: #666;">Click on a case to view its details</p>
+</div>
+
+<!-- Case Details Section -->
+<div id="case-details" class="contenedor-tabla" style="display: none; margin-top: 30px;">
+    <h2 class="titulos2Pantallas">Case Details</h2>
+    
+    <!-- Complete Event Log -->
+    <div class="modelo" style="padding: 20px; background-color: #f9f9f9; border-radius: 5px; margin-bottom: 20px;">
+        <h3 style="margin-top: 0;"><strong>Complete Event Log for Case:</strong> <span id="case-name-complete" style="font-weight: normal;"></span></h3>
+        <div id="complete-case-content" style="overflow-x: auto;">
+            <p><strong>Loading...</strong></p>
+        </div>
+    </div>
+    
+    <!-- Trace File -->
+    <div class="modelo" style="padding: 20px; background-color: #f9f9f9; border-radius: 5px;">
+        <h3 style="margin-top: 0;"><strong>Partial Trace (Uploaded File) for Case:</strong> <span id="case-name-trace" style="font-weight: normal;"></span></h3>
+        <div id="trace-case-content" style="overflow-x: auto;">
+            <p><strong>Loading...</strong></p>
+        </div>
+    </div>
+</div>
+
+<script>
+  const proceso = "{{ proceso }}";
+  const log = "{{ log }}";
+  const filename = "{{ filename }}";
+  const participant = "{{ participant }}";
+  document.getElementById('download-btn').addEventListener('click', function() {
+    let table = document.getElementById('tablaResultados');
+    let data = [];
+
+    // Recorre cada fila del cuerpo de la tabla
+    for (let i = 1, row; row = table.rows[i]; i++) {
+        let rowData = [];
+        for (let j = 0, col; col = row.cells[j]; j++) {
+            rowData.push(col.innerText);
+        }
+        data.push(rowData);
+    }
+
+    // Obtén el título dinámico de la columna desde el HTML
+    let tipoPred = "{{ tipoPred }}";
+
+    // Determina el encabezado de la columna de predicción según el valor de tipoPred
+    let predictionHeader;
+    if (tipoPred == 'NextActivity') {
+        predictionHeader = "Next activity that is likely to occur in the process";
+    } else if (tipoPred == 'ParticipantSend') {
+        predictionHeader = "Next participant that is likely to send a message";
+    } else if (tipoPred == 'ActivityParticipantSend') {
+        predictionHeader = "Next participant that is likely to send a message(with activity)";
+    } else if (tipoPred == 'ActivityParticipant') {
+        predictionHeader = "Next activity that is likely to occur in the process and its participant";
+    } else if (tipoPred == 'Participant') {
+        predictionHeader = "Next participant that is likely to act";
+    } else if (tipoPred == 'NextTime') {
+        predictionHeader = "Time until the next event";
+    } else if (tipoPred == 'NextTimeMessage') {
+        predictionHeader = "Time until the next message to send";
+    } else if (tipoPred == 'RemainingTime') {
+        predictionHeader = "Process remaining time";
+    } else if (tipoPred == 'RemainingTimeParticipant') {
+        predictionHeader = "Participant remaining time: " + participant;
+    }
+
+    // Envía los datos de la tabla y el título de predicción al servidor
+    fetch('/download_csv', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            data: data,
+            predictionHeader: predictionHeader
+        }),
+    })
+    .then(response => response.blob())
+    .then(blob => {
+        let url = window.URL.createObjectURL(blob);
+        let a = document.createElement('a');
+        a.href = url;
+        a.download = "Prediction_results.csv";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+    });
+});
+
+// Add click event to case cells
+document.addEventListener('DOMContentLoaded', function() {
+    const table = document.getElementById('tablaResultados');
+    const tbody = table.querySelector('tbody');
+    
+    tbody.addEventListener('click', function(e) {
+        const cell = e.target;
+        if (cell.tagName === 'TD' && cell.cellIndex === 0) {
+            const caseId = cell.textContent.trim();
+            loadCaseDetails(caseId);
+        }
+    });
+});
+
+function loadCaseDetails(caseId) {
+    const detailsSection = document.getElementById('case-details');
+    const completeCaseContent = document.getElementById('complete-case-content');
+    const traceCaseContent = document.getElementById('trace-case-content');
+    const caseNameComplete = document.getElementById('case-name-complete');
+    const caseNameTrace = document.getElementById('case-name-trace');
+    
+    // Show loading message
+    completeCaseContent.innerHTML = '<p><strong>Loading...</strong></p>';
+    traceCaseContent.innerHTML = '<p><strong>Loading...</strong></p>';
+    caseNameComplete.textContent = caseId;
+    caseNameTrace.textContent = caseId;
+    detailsSection.style.display = 'block';
+    
+    // Scroll to details section
+    detailsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    
+    fetch(`/obtener_detalle_caso?proceso=${encodeURIComponent(proceso)}&log=${encodeURIComponent(log)}&filename=${encodeURIComponent(filename)}&case_id=${encodeURIComponent(caseId)}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to load case details');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.error) {
+                throw new Error(data.error);
+            }
+            
+            // Display complete case
+            const completeCase = data.complete_case;
+            if (completeCase.data.length === 0) {
+                completeCaseContent.innerHTML = '<p style="color: #666; font-style: italic; margin-top: 10px;">Case not available in the event log used for training</p>';
+            } else {
+                let completeHtml = '<table class="tablaModelos" style="width: 100%; margin-top: 10px;">';
+                completeHtml += '<thead><tr>';
+                completeCase.columns.forEach(col => {
+                    completeHtml += `<th>${col}</th>`;
+                });
+                completeHtml += '</tr></thead><tbody>';
+                completeCase.data.forEach(row => {
+                    completeHtml += '<tr>';
+                    completeCase.columns.forEach(col => {
+                        completeHtml += `<td>${row[col] !== null && row[col] !== undefined ? row[col] : ''}</td>`;
+                    });
+                    completeHtml += '</tr>';
+                });
+                completeHtml += '</tbody></table>';
+                completeCaseContent.innerHTML = completeHtml;
+            }
+            
+            // Display trace case
+            const traceCase = data.trace_case;
+            let traceHtml = '<table class="tablaModelos" style="width: 100%; margin-top: 10px;">';
+            traceHtml += '<thead><tr>';
+            traceCase.columns.forEach(col => {
+                traceHtml += `<th>${col}</th>`;
+            });
+            traceHtml += '</tr></thead><tbody>';
+            traceCase.data.forEach(row => {
+                traceHtml += '<tr>';
+                traceCase.columns.forEach(col => {
+                    traceHtml += `<td>${row[col] !== null && row[col] !== undefined ? row[col] : ''}</td>`;
+                });
+                traceHtml += '</tr>';
+            });
+            traceHtml += '</tbody></table>';
+            traceCaseContent.innerHTML = traceHtml;
+        })
+        .catch(error => {
+            completeCaseContent.innerHTML = `<p style="color: red;"><strong>Error loading case details:</strong> ${error.message}</p>`;
+            traceCaseContent.innerHTML = `<p style="color: red;"><strong>Error loading case details:</strong> ${error.message}</p>`;
+        });
+}
+
+</script>
+
+</body>
+
+</html>

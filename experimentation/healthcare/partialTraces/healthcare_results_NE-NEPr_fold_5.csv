@@ -1,0 +1,21 @@
+Case,Next activity that is likely to occur in the process
+case_104,send results
+case_109,communicate the need to hospitalise
+case_114,receive disease info
+case_119,receive prescription
+case_134,send blood sample
+case_139,analyse blood sample
+case_144,receive disease info
+case_164,admit patient
+case_179,receive blood analysis results
+case_219,send blood sample
+case_239,admit patient
+case_254,admit patient
+case_264,communicate the need to hospitalise
+case_279,receive admission info
+case_319,analyse blood sample
+case_354,communicate the need to hospitalise
+case_404,receive blood analysis results
+case_409,require patient admission
+case_439,receive blood sample
+case_464,communicate the need to hospitalise
