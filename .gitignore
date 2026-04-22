@@ -52,11 +52,14 @@ htmlcov/
 
 # Application specific
 _old/
-processing/
+processing/*
+!processing/
 !processing/.gitkeep
-staging/
+staging/*
+!staging/
 !staging/.gitkeep
-trazas/
+trazas/*
+!trazas/
 !trazas/.gitkeep
 
 # ED data
