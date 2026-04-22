@@ -81,7 +81,7 @@ The project is organized in the following directories:
    - ProcessTransformer integration
    - `static/` and `templates/` are Flask built-in directories for static resources and HTML templates
 
-3. **trazas/** - Stores the files uploaded through the web application.
+3. **trazas/** (staging) - Stores the partial trace files uploaded through the web application for prediction processing.
 
 4. **processing/** - Stores the prediction model processing outputs for each individual event log.
 
