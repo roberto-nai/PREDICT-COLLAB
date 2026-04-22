@@ -6,6 +6,8 @@ directories:
   processing: "processing"
   # Directory for uploaded trace files (staging area)
   staging: "trazas"
+  # Directory name inside each model folder for SHAP explainability outputs
+  explanations_shap: "shap"
 
 # Application settings
 app:
@@ -30,5 +32,5 @@ csv_settings:
   
 # Prediction settings
 prediction:
-  max_decimal_places: 3 # Maximum decimal places to display in prediction results
+  max_decimal_places: 5 # Maximum decimal places to display in prediction results
   participant_fetch_limit: 200 # Maximum unique participants returned by /obtener_participantes

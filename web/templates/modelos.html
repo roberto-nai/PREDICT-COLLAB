@@ -127,6 +127,7 @@
                 <th></th>
                 <th></th>
                 <th></th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -148,6 +149,15 @@
                     </td>
                     <td>
                         <button type="button" class="botonesforms" onclick="openPopupMetricas('{{ model.modelo }}','{{ model.tipo_prediccion }}', '{{ model.met1 }}', '{{ model.met2 }}', '{{ model.met3 }}', '{{ model.met4 }}')">View metrics</button>
+                    </td>
+                    <td>
+                        <form action="/explain_model" method="post">
+                            <input type="hidden" name="proceso" value="{{ model.proceso }}">
+                            <input type="hidden" name="log" value="{{ model.log }}">
+                            <input type="hidden" name="tipo_prediccion" value="{{ model.tipo_prediccion }}">
+                            <input type="hidden" name="modelo" value="{{ model.modelo }}">
+                            <button type="submit" class="botonesforms">Explain (SHAP)</button>
+                        </form>
                     </td>
                     <td>
                         <form id=eliminarmodelo action="/eliminar_modelo" method="post">
@@ -181,6 +191,12 @@
 <div id="loading-spinner" class="loading-spinner">
     <div class="spinner"></div>
     <div class="cargandospinner">Generating the model...</div>
+</div>
+
+<!-- Spinner SHAP -->
+<div id="shap-spinner" class="loading-spinner" style="display:none;">
+    <div class="spinner"></div>
+    <div class="cargandospinner">Computing SHAP explanations, please wait...</div>
 </div>
 
 <script>
@@ -598,6 +614,12 @@ document.addEventListener('DOMContentLoaded', function () {
         $('#crea').on('submit', function (event) {
             // Muestra el spinner al enviar el formulario
             $('#loading-spinner').show();
+        });
+
+        // Muestra el spinner SHAP al enviar qualsiasi formulario Explain
+        $('form[action="/explain_model"]').on('submit', function () {
+            $('#shap-spinner').show();
+            document.getElementById('background-overlay').style.display = 'block';
         });
     });
 

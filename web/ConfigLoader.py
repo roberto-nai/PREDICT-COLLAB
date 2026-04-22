@@ -70,3 +70,14 @@ def get_max_decimal_places():
     """
     config = load_config()
     return config.get('prediction', {}).get('max_decimal_places', 5)
+
+
+def get_shap_explanations_dirname():
+    """
+    Get the folder name used to store SHAP explainability outputs inside each model folder.
+
+    Returns:
+        str: SHAP explanations folder name (e.g., 'shap')
+    """
+    config = load_config()
+    return config.get('directories', {}).get('explanations_shap', 'shap')

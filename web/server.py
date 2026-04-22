@@ -16,6 +16,7 @@ from Logs import *
 
 from Predicciones import *
 from PrediccionesTime import *
+from Explainability import ShapExplainer
 from FuncionesAuxiliares import *
 from processtransformer import constants
 from ConfigLoader import load_config, get_processing_dir, get_staging_dir
@@ -755,6 +756,53 @@ def download_csv():
         as_attachment=True,
         download_name='Prediction_results.csv'
     )
+
+@app.route('/explain_model', methods=['POST'])
+def explain_model():
+    try:
+        proceso = request.form.get('proceso')
+        log = request.form.get('log')
+        tipo_prediccion = request.form.get('tipo_prediccion')
+        modelo = request.form.get('modelo')
+
+        if not all([proceso, log, tipo_prediccion, modelo]):
+            raise ValueError('Missing required model parameters for SHAP explainability.')
+
+        explainer = ShapExplainer()
+        result = explainer.explain_model(
+            process_name=proceso,
+            log_name=log,
+            prediction_type=tipo_prediccion,
+            model_name=modelo,
+            top_k=3,
+            nsamples=100,
+        )
+
+        return render_template(
+            'shap_results.html',
+            proceso=proceso,
+            log=log,
+            tipo_prediccion=tipo_prediccion,
+            modelo=modelo,
+            explained_cases=result['explained_cases'],
+            shap_rows=result['rows'],
+            shap_summary_rows=result['summary_rows'],
+            output_dir=result['output_dir'],
+            detail_csv_path=result['detail_csv_path'],
+            summary_csv_path=result['summary_csv_path'],
+            metadata_path=result['metadata_path'],
+            cached=result.get('cached', False),
+        )
+
+    except ValueError as e:
+        flash(f'Error: {e}', 'error')
+        return redirect(url_for('get_modelos', status='ERROR', mensaje_error=str(e)))
+
+    except Exception as e:
+        app.logger.error(f'Unexpected SHAP explain error: {e}', exc_info=True)
+        flash(f'Unexpected error: {e}', 'error')
+        return redirect(url_for('get_modelos', status='ERROR', mensaje_error=str(e)))
+
 
 @app.route('/faq')
 def info():

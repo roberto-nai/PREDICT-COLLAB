@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predict-Collab / SHAP Results</title>
+    <link href="{{ url_for('static', filename='styles/style.css') }}" rel="stylesheet" />
+    <style>
+        .shap-results-container {
+            width: 80%;
+            max-width: 80%;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+
+<body class="predicciones">
+<div class="navbar">
+    <a href="{{ url_for('index') }}" class="inicio">Home</a>
+    <a href="{{ url_for('get_logs') }}" class="logs">Logs</a>
+    <a href="{{ url_for('get_modelos') }}" class="inicio">Models</a>
+    <a href="{{ url_for('pred') }}" class="inicio">Predictions</a>
+    <a href="{{ url_for('info') }}" class="inicio">FAQ</a>
+    <a href="{{ url_for('show_config') }}" class="inicio config-link">Config</a>
+</div>
+
+<h1 class="titulosPantallas">SHAP Explainability Results</h1>
+
+<div class="contenedor-tabla-predicciones shap-results-container">
+    <p><strong>Process:</strong> {{ proceso }}</p>
+    <p><strong>Log:</strong> {{ log }}</p>
+    <p><strong>Model:</strong> {{ modelo }}</p>
+    <p><strong>Prediction type:</strong> {{ tipo_prediccion }}</p>
+    <p><strong>Explained cases:</strong> {{ explained_cases }}</p>
+    <p><strong>Source:</strong> {% if cached %}Loaded from existing SHAP results{% else %}Computed now{% endif %}</p>
+    <p><strong>Saved outputs:</strong> {{ output_dir }}</p>
+    <p><strong>Files:</strong></p>
+    <ul>
+        <li>{{ detail_csv_path }}</li>
+        <li>{{ summary_csv_path }}</li>
+        <li>{{ metadata_path }}</li>
+    </ul>
+
+    <h2 class="titulos2Pantallas">Top events per case</h2>
+    <table class="tablaPredicciones">
+        <caption>SHAP top event importance by case</caption>
+        <thead>
+            <tr>
+                <th>Case</th>
+                <th>Predicted label</th>
+                <th>Confidence</th>
+                <th>Event rank 1</th>
+                <th>Event rank 2</th>
+                <th>Event rank 3</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in shap_rows %}
+            <tr>
+                <td>{{ row.case_id }}</td>
+                <td>{{ row.predicted_label }}</td>
+                <td>{{ "%.4f"|format(row.predicted_confidence) }}</td>
+                <td>{{ row.event_rank_1 }}</td>
+                <td>{{ row.event_rank_2 }}</td>
+                <td>{{ row.event_rank_3 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2 class="titulos2Pantallas" style="margin-top: 25px;">Global event summary</h2>
+    <table class="tablaPredicciones">
+        <caption>Mean absolute SHAP by event</caption>
+        <thead>
+            <tr>
+                <th>Event</th>
+                <th>Mean abs SHAP</th>
+                <th>Occurrences total</th>
+                <th>Occurrences %</th>
+                <th>Cases</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in shap_summary_rows %}
+            <tr>
+                <td>{{ row.event_name }}</td>
+                <td>{{ row.mean_abs_shap }}</td>
+                <td>{{ row.occurrences_total }}</td>
+                <td>{{ "%.2f"|format(row.occurrences_percent) }}</td>
+                <td>{{ row.cases }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>
