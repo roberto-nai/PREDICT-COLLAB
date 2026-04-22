@@ -32,6 +32,7 @@
     <a href="{{ url_for('get_modelos') }}" class="inicio">Models</a>
     <a href="{{ url_for('pred') }}" class="inicio">Predictions</a>
     <a href="{{ url_for('info') }}" class="inicio">FAQ</a>
+    <a href="{{ url_for('show_config') }}" class="inicio config-link">Config</a>
 </div>
 
 <h1 class="titulosPantallas">Models management</h1>
@@ -347,8 +348,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const logSelect = document.getElementById('log');
     const column1Select = document.getElementById('column1');
 
-
-    column1.addEventListener('change', function () {
+    function loadParticipantsIfNeeded() {
         if (tipoPredSelect.value === 'RemainingTimeParticipant') {
             // Mostrar el select y el label si "RemainingTimeParticipant" está seleccionado
             participante.style.display = 'block';
@@ -362,9 +362,9 @@ document.addEventListener('DOMContentLoaded', function () {
             const logSeleccionado = logSelect.value;
             const column1 = column1Select.value;
 
-            if (procesoSeleccionado && logSeleccionado) {
+            if (procesoSeleccionado && logSeleccionado && column1) {
                 // Hacer una llamada al servidor para obtener los participantes
-                fetch(`/obtener_participantes?proceso=${procesoSeleccionado}&log=${logSeleccionado}&column1=${column1}`)
+                fetch(`/obtener_participantes?proceso=${encodeURIComponent(procesoSeleccionado)}&log=${encodeURIComponent(logSeleccionado)}&column1=${encodeURIComponent(column1)}`)
                     .then(response => {
                         if (!response.ok) {
                             // Si la respuesta no es OK, lanzar un error con el mensaje
@@ -402,7 +402,11 @@ document.addEventListener('DOMContentLoaded', function () {
             participante.value = '';
             participante.removeAttribute('required');
         }
-    });
+    }
+
+    column1Select.addEventListener('change', loadParticipantsIfNeeded);
+    tipoPredSelect.addEventListener('change', loadParticipantsIfNeeded);
+    logSelect.addEventListener('change', loadParticipantsIfNeeded);
 });
 
 </script>
@@ -419,6 +423,47 @@ document.addEventListener('DOMContentLoaded', function () {
     const DEFAULT_PARTICIPANT_COL = "{{ default_participant }}";
     const DEFAULT_ELEMENT_TYPE_COL = "{{ default_element_type }}";
     const MAX_DECIMAL_PLACES = {{ max_decimal_places }};
+    let currentColumns = [];
+
+    function applyDefaultColumnsByPredictionType(columnas) {
+        const column1Select = document.getElementById("column1");
+        const column2Select = document.getElementById("column2");
+        const column3Select = document.getElementById("column3");
+        const tipoPred = document.getElementById('tipoPred').value;
+
+        if (!columnas || columnas.length === 0 || !tipoPred) {
+            return;
+        }
+
+        // Set default activity column
+        if (DEFAULT_ACTIVITY_COL && columnas.includes(DEFAULT_ACTIVITY_COL)) {
+            if (tipoPred === 'NextActivity' || tipoPred === 'ActivityParticipant' ||
+                tipoPred === 'NextTime' || tipoPred === 'RemainingTime') {
+                column1Select.value = DEFAULT_ACTIVITY_COL;
+            } else if (tipoPred === 'ActivityParticipantSend') {
+                column2Select.value = DEFAULT_ACTIVITY_COL;
+            }
+        }
+
+        // Set default element type column
+        if (DEFAULT_ELEMENT_TYPE_COL && columnas.includes(DEFAULT_ELEMENT_TYPE_COL)) {
+            if (tipoPred === 'ParticipantSend' || tipoPred === 'ActivityParticipantSend' ||
+                tipoPred === 'NextTimeMessage') {
+                column1Select.value = DEFAULT_ELEMENT_TYPE_COL;
+            }
+        }
+
+        // Set default participant column
+        if (DEFAULT_PARTICIPANT_COL && columnas.includes(DEFAULT_PARTICIPANT_COL)) {
+            if (tipoPred === 'Participant' || tipoPred === 'RemainingTimeParticipant') {
+                column1Select.value = DEFAULT_PARTICIPANT_COL;
+            } else if (tipoPred === 'ParticipantSend' || tipoPred === 'ActivityParticipant') {
+                column2Select.value = DEFAULT_PARTICIPANT_COL;
+            } else if (tipoPred === 'ActivityParticipantSend') {
+                column3Select.value = DEFAULT_PARTICIPANT_COL;
+            }
+        }
+    }
 
     function actualizarLogs() {
         const procesoSeleccionado = document.getElementById("proceso").value;
@@ -466,6 +511,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(response => response.json())
             .then(data => {
                 const columnas = data.columnas;
+                currentColumns = columnas;
 
                 // Función para llenar un select con las columnas
                 function llenarSelect(selectElement, columnas) {
@@ -492,38 +538,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (DEFAULT_TIMESTAMP_COL && columnas.includes(DEFAULT_TIMESTAMP_COL)) {
                     columnTSelect.value = DEFAULT_TIMESTAMP_COL;
                 }
-                
-                // Set default values based on prediction type
-                const tipoPred = document.getElementById('tipoPred').value;
-                
-                // Set default activity column
-                if (DEFAULT_ACTIVITY_COL && columnas.includes(DEFAULT_ACTIVITY_COL)) {
-                    if (tipoPred === 'NextActivity' || tipoPred === 'ActivityParticipant' || 
-                        tipoPred === 'NextTime' || tipoPred === 'RemainingTime') {
-                        column1Select.value = DEFAULT_ACTIVITY_COL;
-                    } else if (tipoPred === 'ActivityParticipantSend') {
-                        column2Select.value = DEFAULT_ACTIVITY_COL;
-                    }
-                }
-                
-                // Set default element type column
-                if (DEFAULT_ELEMENT_TYPE_COL && columnas.includes(DEFAULT_ELEMENT_TYPE_COL)) {
-                    if (tipoPred === 'ParticipantSend' || tipoPred === 'ActivityParticipantSend' || 
-                        tipoPred === 'NextTimeMessage') {
-                        column1Select.value = DEFAULT_ELEMENT_TYPE_COL;
-                    }
-                }
-                
-                // Set default participant column
-                if (DEFAULT_PARTICIPANT_COL && columnas.includes(DEFAULT_PARTICIPANT_COL)) {
-                    if (tipoPred === 'Participant' || tipoPred === 'RemainingTimeParticipant') {
-                        column1Select.value = DEFAULT_PARTICIPANT_COL;
-                    } else if (tipoPred === 'ParticipantSend' || tipoPred === 'ActivityParticipant') {
-                        column2Select.value = DEFAULT_PARTICIPANT_COL;
-                    } else if (tipoPred === 'ActivityParticipantSend') {
-                        column3Select.value = DEFAULT_PARTICIPANT_COL;
-                    }
-                }
+
+                applyDefaultColumnsByPredictionType(columnas);
 
                 // Seleccionar la columna previamente seleccionada, si existe
                 if (columnaSeleccionada) {
@@ -549,6 +565,10 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     document.getElementById("log").addEventListener("change", actualizarColumnas);
+    document.getElementById("tipoPred").addEventListener("change", function() {
+        applyDefaultColumnsByPredictionType(currentColumns);
+        document.getElementById("column1").dispatchEvent(new Event('change'));
+    });
 </script>
 
 

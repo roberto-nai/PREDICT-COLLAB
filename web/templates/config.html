@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predict-Collab / Config</title>
+    <link href="{{ url_for('static', filename='styles/style.css') }}" rel="stylesheet" />
+</head>
+
+<body>
+<div class="navbar">
+    <a href="{{ url_for('index') }}" class="inicio">Home</a>
+    <a href="{{ url_for('get_logs') }}" class="logs">Logs</a>
+    <a href="{{ url_for('get_modelos') }}" class="inicio">Models</a>
+    <a href="{{ url_for('pred') }}" class="inicio">Predictions</a>
+    <a href="{{ url_for('info') }}" class="inicio">FAQ</a>
+    <a href="{{ url_for('show_config') }}" class="inicio config-link">Config</a>
+</div>
+
+<h1 class="titulosPantallas">Configuration</h1>
+
+<div class="contenedor-tabla" style="max-width: 1100px; margin: 20px auto;">
+    <pre style="background-color: #fff; border: 2px solid #229954; border-radius: 8px; padding: 20px; overflow-x: auto; white-space: pre-wrap; word-break: break-word; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">{{ config_content }}</pre>
+</div>
+
+</body>
+
+</html>

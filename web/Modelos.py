@@ -4,6 +4,7 @@ Docstring per web.Modelos
 """
 import joblib
 import tensorflow as tf
+import shutil
 
 from sklearn import metrics
 
@@ -25,15 +26,23 @@ class Modelos:
         ruta_proceso=os.path.join(ruta_procesos, proceso)
         ruta_carpeta_log=os.path.join(ruta_proceso,log)
         ruta_log=os.path.join(ruta_carpeta_log, log)
+        ruta_log_temporal = None
+        ruta_log_procesamiento = ruta_log
 
 
         columnaFinal=""
         if tipoPred in ("NextActivity", "Participant","NextTime","NextTimeMessage","RemainingTime","RemainingTimeParticipant"):
             columnaFinal = column1
         elif tipoPred in ("ParticipantSend","ActivityParticipant"):
-            columnaFinal = concatenate_columns(ruta_log, column1, column2, None)
+            ruta_log_temporal = os.path.join(ruta_carpeta_log, f".__tmp_model_input__{log}")
+            shutil.copyfile(ruta_log, ruta_log_temporal)
+            ruta_log_procesamiento = ruta_log_temporal
+            columnaFinal = concatenate_columns(ruta_log_procesamiento, column1, column2, None)
         elif tipoPred == "ActivityParticipantSend":
-            columnaFinal = concatenate_columns(ruta_log, column1, column2, column3)
+            ruta_log_temporal = os.path.join(ruta_carpeta_log, f".__tmp_model_input__{log}")
+            shutil.copyfile(ruta_log, ruta_log_temporal)
+            ruta_log_procesamiento = ruta_log_temporal
+            columnaFinal = concatenate_columns(ruta_log_procesamiento, column1, column2, column3)
 
         # dejo en minuscula  participant
         if participant is not None:
@@ -43,7 +52,7 @@ class Modelos:
         ruta_base = os.path.abspath(os.path.join(ruta_actual, os.pardir))
         ruta_datasets = os.path.join(ruta_base,'web', 'datasets')
 
-        data_processor = LogsDataProcessor(name='predict-collab', filepath=ruta_log,
+        data_processor = LogsDataProcessor(name='predict-collab', filepath=ruta_log_procesamiento,
                                            columns=[columnID, columnaFinal, columnT],
                                            dir_path=ruta_datasets, pool=4)
 
@@ -236,6 +245,9 @@ class Modelos:
             joblib.dump(time_scaler, ruta_absoluta_time_scaler)
 
         # ---------------
+
+        if ruta_log_temporal is not None and os.path.exists(ruta_log_temporal):
+            os.remove(ruta_log_temporal)
 
         return nombreModelo
 

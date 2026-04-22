@@ -10,6 +10,9 @@ body {
     background-color: #229954; /* Verde esmeralda oscuro */
     padding: 10px;
     text-align: left; /* Alineación a la izquierda */
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
 .navbar a {
@@ -21,6 +24,10 @@ body {
 
 .navbar a:hover {
     color: #ddd;
+}
+
+.navbar a.config-link {
+    margin-left: auto;
 }
 
 

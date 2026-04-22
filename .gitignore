@@ -58,3 +58,7 @@ staging/
 !staging/.gitkeep
 trazas/
 !trazas/.gitkeep
+
+# ED data
+ed/
+ed/*

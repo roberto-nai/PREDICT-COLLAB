@@ -42,11 +42,11 @@ You need to install python 3.10 with pip then follow this steps
 
 1. Open terminal in the app's web directory 
 2. Check python version to be 3.10
-	```py --version``` (use ```python3``` instead of ```py``` in Mac)
+	```py --version``` (use ```python3``` instead of ```py``` in macOS)
 3. Create virtual enviroment
 	```py -m venv venv```
 4. Activate the virtual enviroment
-	```venv\Scripts\activate.bat``` (use ```source ./venv/bin/activate``` in Mac)
+	```venv\Scripts\activate.bat``` (use ```source ./venv/bin/activate``` in macOS)
 5. Install requirements
 	```pip install -r requirements.txt```
 6. Enter the ```web``` directory and run the app

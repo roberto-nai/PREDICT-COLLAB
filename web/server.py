@@ -74,6 +74,13 @@ if not os.path.exists(staging_dir):
 def index():
     return render_template('index.html')
 
+@app.route('/config')
+def show_config():
+    config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'config.yml')
+    with open(config_path, 'r', encoding='utf-8') as config_file:
+        config_content = config_file.read()
+    return render_template('config.html', config_content=config_content)
+
 @app.route('/Cargarlogs',methods=['GET', 'POST'])
 def get_carga_logs():
     try:
@@ -287,7 +294,8 @@ def obtener_participantes():
 
         file_path_log = os.path.join(get_processing_dir(), proceso, log, log)
 
-        limit=10 # limite de participantes aceptados en la columa
+        prediction_settings = config.get('prediction', {})
+        limit = prediction_settings.get('participant_fetch_limit', 200)  # max unique participants to return
 
         # Leer el archivo CSV en fragmentos para no cargar todo en memoria de una vez
         chunk_size = 40  # Puedes ajustar el tamaño del fragmento según tu caso

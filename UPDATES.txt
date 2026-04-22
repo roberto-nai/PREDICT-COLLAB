@@ -43,3 +43,7 @@
   - CSV structure includes: Timestamp, Process, File, Model_Name, Prediction_Type, and all metrics columns (non-applicable metrics marked with -1)
   - Metrics are rounded according to `prediction.max_decimal_places` setting from config.yml
   - Added `get_max_decimal_places()` function in ConfigLoader.py to retrieve decimal precision from configuration
+
+## 2026-04-22
+- Added `participant_fetch_limit` in config.yml to configure the maximum number of participants returned by `/obtener_participantes`.
+- Added a `Config` entry in the navbar to display the contents of `config.yml`.

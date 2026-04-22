@@ -23,10 +23,12 @@ event_log:
   participant_col: "collab:participant"
   element_type_col: "collab:elemType"
 
+# CSV file settings
 csv_settings:
   delimiter: "," # Delimiter for CSV files
   encoding: "utf-8" # Encoding for CSV files
   
 # Prediction settings
 prediction:
-  max_decimal_places: 5 # Maximum decimal places to display in prediction results
+  max_decimal_places: 3 # Maximum decimal places to display in prediction results
+  participant_fetch_limit: 200 # Maximum unique participants returned by /obtener_participantes
