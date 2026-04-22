@@ -56,8 +56,6 @@ processing/*
 !processing/
 !processing/.gitkeep
 staging/*
-!staging/
-!staging/.gitkeep
 trazas/*
 !trazas/
 !trazas/.gitkeep
