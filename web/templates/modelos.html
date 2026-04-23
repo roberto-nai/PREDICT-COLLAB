@@ -196,7 +196,7 @@
 <!-- Spinner SHAP -->
 <div id="shap-spinner" class="loading-spinner" style="display:none;">
     <div class="spinner"></div>
-    <div class="cargandospinner">Computing SHAP explanations, please wait...</div>
+    <div class="cargandospinner" id="shap-spinner-text">Computing SHAP explanations, please wait...</div>
 </div>
 
 <script>
@@ -618,6 +618,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Muestra el spinner SHAP al enviar qualsiasi formulario Explain
         $('form[action="/explain_model"]').on('submit', function () {
+            var modelName = $(this).find('input[name="modelo"]').val();
+            $('#shap-spinner-text').text("Computing SHAP explanations for model '" + modelName + "', please wait...");
             $('#shap-spinner').show();
             document.getElementById('background-overlay').style.display = 'block';
         });
@@ -667,8 +669,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const eliminar = urlParams.get('eliminar');
 
 
-         if ((!error) && (eliminar === null || eliminar === "")){
-            mensajeError = 'Error al crear el modelo: ' + urlParams.get('mensaje_error');
+            if ((!error) && (eliminar === null || eliminar === "")){
+                mensajeError = 'Error creating model: ' + urlParams.get('mensaje_error');
             status = urlParams.get('status');
         } else if (eliminar === null || eliminar === ""){
             mensajeError = error;

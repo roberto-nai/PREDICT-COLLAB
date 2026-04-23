@@ -34,6 +34,7 @@
     <p><strong>Prediction type:</strong> {{ tipo_prediccion }}</p>
     <p><strong>Explained cases:</strong> {{ explained_cases }}</p>
     <p><strong>Source:</strong> {% if cached %}Loaded from existing SHAP results{% else %}Computed now{% endif %}</p>
+    <p><strong>Started at:</strong> {{ started_at }} &nbsp;|&nbsp; <strong>Ended at:</strong> {{ ended_at }} &nbsp;|&nbsp; <strong>Delta time (sec):</strong> {{ delta_time_sec }} &nbsp;|&nbsp; <strong>Delta time (min):</strong> {{ delta_time_min }}</p>
     <p><strong>Saved outputs:</strong> {{ output_dir }}</p>
     <p><strong>Files:</strong></p>
     <ul>

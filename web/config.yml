@@ -33,4 +33,9 @@ csv_settings:
 # Prediction settings
 prediction:
   max_decimal_places: 5 # Maximum decimal places to display in prediction results
-  participant_fetch_limit: 200 # Maximum unique participants returned by /obtener_participantes
+  participant_fetch_limit: 20 # Maximum unique participants returned by /obtener_participantes
+
+# XAI settings
+xai:
+  shap:
+    max_cases: 300 # Maximum number of cases to explain with SHAP (to limit computation time)

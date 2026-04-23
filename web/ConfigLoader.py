@@ -81,3 +81,14 @@ def get_shap_explanations_dirname():
     """
     config = load_config()
     return config.get('directories', {}).get('explanations_shap', 'shap')
+
+
+def get_shap_max_cases():
+    """
+    Get the maximum number of cases to explain with SHAP.
+
+    Returns:
+        int: Maximum number of cases (default: 200)
+    """
+    config = load_config()
+    return int(config.get('xai', {}).get('shap', {}).get('max_cases', 200))

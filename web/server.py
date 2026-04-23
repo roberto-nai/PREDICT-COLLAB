@@ -21,6 +21,17 @@ from FuncionesAuxiliares import *
 from processtransformer import constants
 from ConfigLoader import load_config, get_processing_dir, get_staging_dir
 
+
+def _fmt_shap_dt(iso_str):
+    """Format ISO datetime string '2026-04-22T15:29:58.968633Z' → '2026-04-22 15:29:58'."""
+    if not iso_str:
+        return ''
+    try:
+        from datetime import datetime
+        return datetime.fromisoformat(iso_str.rstrip('Z')).strftime('%Y-%m-%d %H:%M:%S')
+    except (ValueError, AttributeError):
+        return iso_str
+
 app = Flask(__name__)
 
 # Load configuration from config.yml
@@ -457,6 +468,7 @@ def get_modelos():
 
     m = Modelos()
     models = m.listar_modelos()
+    models.sort(key=lambda x: x['modelo'])
 
     log_seleccionado = request.args.get('opcion_log')
     proceso_seleccionado = request.args.get('opcion_proceso')
@@ -792,6 +804,10 @@ def explain_model():
             summary_csv_path=result['summary_csv_path'],
             metadata_path=result['metadata_path'],
             cached=result.get('cached', False),
+            started_at=_fmt_shap_dt(result.get('started_at', '')),
+            ended_at=_fmt_shap_dt(result.get('ended_at', '')),
+            delta_time_sec=result.get('delta_time_sec', ''),
+            delta_time_min=result.get('delta_time_min', ''),
         )
 
     except ValueError as e:

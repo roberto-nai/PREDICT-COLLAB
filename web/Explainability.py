@@ -12,7 +12,7 @@ import pandas as pd
 import tensorflow as tf
 from tensorflow.keras.models import load_model
 
-from ConfigLoader import get_processing_dir, get_shap_explanations_dirname, get_max_decimal_places
+from ConfigLoader import get_processing_dir, get_shap_explanations_dirname, get_max_decimal_places, get_shap_max_cases
 from FuncionesAuxiliares import load_variables
 from processtransformer.constants import Task
 from processtransformer.models.transformer import TokenAndPositionEmbedding, TransformerBlock
@@ -21,6 +21,114 @@ from processtransformer.models.transformer import TokenAndPositionEmbedding, Tra
 class ShapExplainer:
     def __init__(self):
         pass
+
+    def _get_log_level_shap_paths(self, processing_dir, process_name, log_name):
+        log_dir = os.path.join(processing_dir, process_name, log_name)
+        shap_metrics_path = os.path.join(log_dir, 'shap_metrics.csv')
+        shap_common_top10_path = os.path.join(log_dir, 'shap_common_top10.csv')
+        return log_dir, shap_metrics_path, shap_common_top10_path
+
+    def _upsert_shap_metrics(self, shap_metrics_path, process_name, log_name, prediction_type, model_name, summary_rows, top_n=10):
+        top_rows = summary_rows[:top_n]
+        if not top_rows:
+            return
+
+        now_str = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        new_rows = []
+        for idx, item in enumerate(top_rows, start=1):
+            new_rows.append(
+                {
+                    'Timestamp': now_str,
+                    'Process': process_name,
+                    'File': log_name,
+                    'Prediction_Type': prediction_type,
+                    'Model_Name': model_name,
+                    'Rank': int(idx),
+                    'Event_Name': str(item.get('event_name', '')),
+                    'Mean_Abs_SHAP': float(item.get('mean_abs_shap', 0.0)),
+                    'Occurrences_Total': int(item.get('occurrences_total', 0)),
+                    'Occurrences_Percent': float(item.get('occurrences_percent', 0.0)),
+                    'Cases': int(item.get('cases', 0)),
+                }
+            )
+
+        new_df = pd.DataFrame(new_rows)
+
+        required_cols = {'Process', 'File', 'Prediction_Type', 'Model_Name'}
+
+        if os.path.exists(shap_metrics_path):
+            existing_df = pd.read_csv(shap_metrics_path)
+            if required_cols.issubset(set(existing_df.columns)):
+                keep_mask = ~(
+                    (existing_df['Process'].astype(str) == str(process_name))
+                    & (existing_df['File'].astype(str) == str(log_name))
+                    & (existing_df['Prediction_Type'].astype(str) == str(prediction_type))
+                    & (existing_df['Model_Name'].astype(str) == str(model_name))
+                )
+                existing_df = existing_df[keep_mask]
+                merged_df = pd.concat([existing_df, new_df], ignore_index=True)
+                merged_df.to_csv(shap_metrics_path, index=False)
+            else:
+                new_df.to_csv(shap_metrics_path, index=False)
+        else:
+            new_df.to_csv(shap_metrics_path, index=False)
+
+    def _refresh_shap_common_top10(self, shap_metrics_path, shap_common_top10_path, top_n=10):
+        if not os.path.exists(shap_metrics_path):
+            return
+
+        metrics_df = pd.read_csv(shap_metrics_path)
+        if metrics_df.empty:
+            return
+
+        metrics_df['Mean_Abs_SHAP'] = pd.to_numeric(metrics_df['Mean_Abs_SHAP'], errors='coerce').fillna(0.0)
+        metrics_df['Occurrences_Total'] = pd.to_numeric(metrics_df['Occurrences_Total'], errors='coerce').fillna(0)
+
+        metrics_df['Model_Key'] = (
+            metrics_df['Process'].astype(str)
+            + '|'
+            + metrics_df['File'].astype(str)
+            + '|'
+            + metrics_df['Prediction_Type'].astype(str)
+            + '|'
+            + metrics_df['Model_Name'].astype(str)
+        )
+
+        total_models = metrics_df['Model_Key'].nunique()
+
+        aggregated = (
+            metrics_df.groupby('Event_Name', dropna=False)
+            .agg(
+                Mean_Weight=('Mean_Abs_SHAP', 'mean'),
+                Median_Weight=('Mean_Abs_SHAP', 'median'),
+                Models_Count=('Model_Key', pd.Series.nunique),
+                Tasks_Count=('Prediction_Type', pd.Series.nunique),
+                Total_Occurrences=('Occurrences_Total', 'sum'),
+            )
+            .reset_index()
+        )
+
+        aggregated['Coverage_Rate'] = aggregated['Models_Count'] / total_models if total_models else 0.0
+        aggregated['Composite_Score'] = aggregated['Models_Count'] * aggregated['Mean_Weight']
+        aggregated['Normalized_Composite_Score'] = aggregated['Coverage_Rate'] * aggregated['Mean_Weight']
+
+        aggregated = aggregated.sort_values(
+            by=['Normalized_Composite_Score', 'Composite_Score', 'Models_Count', 'Mean_Weight', 'Total_Occurrences'],
+            ascending=[False, False, False, False, False],
+        )
+
+        aggregated['Coverage_Rate'] = aggregated['Coverage_Rate'].round(get_max_decimal_places())
+        aggregated['Composite_Score'] = aggregated['Composite_Score'].round(get_max_decimal_places())
+        aggregated['Normalized_Composite_Score'] = aggregated['Normalized_Composite_Score'].round(get_max_decimal_places())
+
+        top_df = aggregated.head(top_n).copy()
+        top_df.insert(0, 'Rank', range(1, len(top_df) + 1))
+        top_df['Coverage_Rate'] = top_df['Coverage_Rate'].round(get_max_decimal_places())
+        top_df['Composite_Score'] = top_df['Composite_Score'].round(get_max_decimal_places())
+        top_df['Normalized_Composite_Score'] = top_df['Normalized_Composite_Score'].round(get_max_decimal_places())
+        top_df['Mean_Weight'] = top_df['Mean_Weight'].round(get_max_decimal_places())
+        top_df['Median_Weight'] = top_df['Median_Weight'].round(get_max_decimal_places())
+        top_df.to_csv(shap_common_top10_path, index=False)
 
     def _validate_task(self, input_task):
         if input_task not in (Task.NEXT_ACTIVITY, Task.NEXT_MESSAGE_SEND):
@@ -108,6 +216,10 @@ class ShapExplainer:
             "summary_rows": summary_df.to_dict(orient='records'),
             "explained_cases": int(explained_cases),
             "metadata": metadata,
+            "started_at": metadata.get('started_at', ''),
+            "ended_at": metadata.get('ended_at', ''),
+            "delta_time_sec": metadata.get('delta_time_sec', ''),
+            "delta_time_min": metadata.get('delta_time_min', ''),
         }
 
     def _get_row_shap_for_predicted_class(self, shap_values, sample_idx, pred_class, num_samples, num_features):
@@ -297,17 +409,45 @@ class ShapExplainer:
                 and os.path.exists(summary_csv_path)
                 and os.path.exists(metadata_path)):
             cached_result = self._load_existing_results(detail_csv_path, summary_csv_path, metadata_path)
+
+            log_dir, shap_metrics_path, shap_common_top10_path = self._get_log_level_shap_paths(
+                processing_dir=processing_dir,
+                process_name=process_name,
+                log_name=log_name,
+            )
+            os.makedirs(log_dir, exist_ok=True)
+            self._upsert_shap_metrics(
+                shap_metrics_path=shap_metrics_path,
+                process_name=process_name,
+                log_name=log_name,
+                prediction_type=prediction_type,
+                model_name=model_name,
+                summary_rows=cached_result["summary_rows"],
+                top_n=10,
+            )
+            self._refresh_shap_common_top10(
+                shap_metrics_path=shap_metrics_path,
+                shap_common_top10_path=shap_common_top10_path,
+                top_n=10,
+            )
+
             return {
                 "output_dir": output_dir,
                 "detail_csv_path": detail_csv_path,
                 "summary_csv_path": summary_csv_path,
                 "metadata_path": metadata_path,
+                "shap_metrics_path": shap_metrics_path,
+                "shap_common_top10_path": shap_common_top10_path,
                 "rows": cached_result["rows"],
                 "summary_rows": cached_result["summary_rows"],
                 "explained_cases": cached_result["explained_cases"],
                 "model": model_name,
                 "prediction_type": prediction_type,
                 "cached": True,
+                "started_at": cached_result["started_at"],
+                "ended_at": cached_result["ended_at"],
+                "delta_time_sec": cached_result["delta_time_sec"],
+                "delta_time_min": cached_result["delta_time_min"],
             }
 
         properties = load_variables(model_properties_path)
@@ -349,8 +489,9 @@ class ShapExplainer:
         inv_x_dict = self._invert_dict(x_word_dict)
         predicted_labels = [inv_y_dict.get(int(idx), str(idx)) for idx in predicted_idx]
 
+        max_cases = get_shap_max_cases()
         background_size = min(30, token_x.shape[0])
-        explain_size = min(200, token_x.shape[0])
+        explain_size = min(max_cases, token_x.shape[0])
         background = token_x[:background_size]
         explain_samples = token_x[:explain_size]
         explain_case_ids = case_ids[:explain_size]
@@ -377,6 +518,27 @@ class ShapExplainer:
 
         pd.DataFrame(detail_rows).to_csv(detail_csv_path, index=False)
         pd.DataFrame(summary_rows).to_csv(summary_csv_path, index=False)
+
+        log_dir, shap_metrics_path, shap_common_top10_path = self._get_log_level_shap_paths(
+            processing_dir=processing_dir,
+            process_name=process_name,
+            log_name=log_name,
+        )
+        os.makedirs(log_dir, exist_ok=True)
+        self._upsert_shap_metrics(
+            shap_metrics_path=shap_metrics_path,
+            process_name=process_name,
+            log_name=log_name,
+            prediction_type=prediction_type,
+            model_name=model_name,
+            summary_rows=summary_rows,
+            top_n=10,
+        )
+        self._refresh_shap_common_top10(
+            shap_metrics_path=shap_metrics_path,
+            shap_common_top10_path=shap_common_top10_path,
+            top_n=10,
+        )
 
         ended_at_utc = datetime.utcnow()
         delta_time_seconds = round((ended_at_utc - started_at_utc).total_seconds(), 2)
@@ -419,10 +581,16 @@ class ShapExplainer:
             "detail_csv_path": detail_csv_path,
             "summary_csv_path": summary_csv_path,
             "metadata_path": metadata_path,
+            "shap_metrics_path": shap_metrics_path,
+            "shap_common_top10_path": shap_common_top10_path,
             "rows": detail_rows,
             "summary_rows": summary_rows,
             "explained_cases": explain_size,
             "model": model_name,
             "prediction_type": prediction_type,
             "cached": False,
+            "started_at": metadata["started_at"],
+            "ended_at": metadata["ended_at"],
+            "delta_time_sec": metadata["delta_time_sec"],
+            "delta_time_min": metadata["delta_time_min"],
         }
