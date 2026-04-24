@@ -19,16 +19,47 @@ from processtransformer.models.transformer import TokenAndPositionEmbedding, Tra
 
 
 class ShapExplainer:
+    """Computes SHAP-based explanations for trained classification models.
+
+    Uses a model-agnostic KernelExplainer to approximate Shapley values over
+    tokenised event sequences, then aggregates results at both model and log level.
+    """
+
     def __init__(self):
         pass
 
     def _get_log_level_shap_paths(self, processing_dir, process_name, log_name):
+        """Return the paths of the two log-level SHAP aggregate CSV files.
+
+        Args:
+            processing_dir (str): Root processing directory.
+            process_name (str): Name of the process.
+            log_name (str): Name of the event log.
+
+        Returns:
+            tuple[str, str, str]: (log_dir, shap_metrics_path, shap_common_top10_path)
+        """
         log_dir = os.path.join(processing_dir, process_name, log_name)
         shap_metrics_path = os.path.join(log_dir, 'shap_metrics.csv')
         shap_common_top10_path = os.path.join(log_dir, 'shap_common_top10.csv')
         return log_dir, shap_metrics_path, shap_common_top10_path
 
     def _upsert_shap_metrics(self, shap_metrics_path, process_name, log_name, prediction_type, model_name, summary_rows, top_n=10):
+        """Write or update the top-N SHAP events for one model/task in the log-level metrics CSV.
+
+        If an entry already exists for the same process/log/task/model combination it is
+        replaced, preserving entries from all other models (upsert semantics).
+
+        Args:
+            shap_metrics_path (str): Absolute path to shap_metrics.csv.
+            process_name (str): Name of the process.
+            log_name (str): Name of the event log.
+            prediction_type (str): Prediction task label (e.g. 'NextActivity').
+            model_name (str): Identifier of the trained model.
+            summary_rows (list[dict]): Per-event summary dicts from _extract_top_events_per_case.
+            top_n (int): Maximum number of top events to persist. Defaults to 10.
+        """
+        # Keep only the top-N events from the per-model summary
         top_rows = summary_rows[:top_n]
         if not top_rows:
             return
@@ -59,6 +90,7 @@ class ShapExplainer:
         if os.path.exists(shap_metrics_path):
             existing_df = pd.read_csv(shap_metrics_path)
             if required_cols.issubset(set(existing_df.columns)):
+                # Remove stale rows for this exact model/task combination
                 keep_mask = ~(
                     (existing_df['Process'].astype(str) == str(process_name))
                     & (existing_df['File'].astype(str) == str(log_name))
@@ -69,11 +101,25 @@ class ShapExplainer:
                 merged_df = pd.concat([existing_df, new_df], ignore_index=True)
                 merged_df.to_csv(shap_metrics_path, index=False)
             else:
+                # Existing file has an incompatible schema; overwrite it
                 new_df.to_csv(shap_metrics_path, index=False)
         else:
+            # First run: create the file from scratch
             new_df.to_csv(shap_metrics_path, index=False)
 
     def _refresh_shap_common_top10(self, shap_metrics_path, shap_common_top10_path, top_n=10):
+        """Recompute and overwrite the global cross-model top-N events CSV.
+
+        Reads all rows from shap_metrics.csv, aggregates per unique event name across
+        every model/task, computes Coverage_Rate, Composite_Score and
+        Normalized_Composite_Score, and writes the top-N events ranked by
+        Normalized_Composite_Score.
+
+        Args:
+            shap_metrics_path (str): Absolute path to shap_metrics.csv.
+            shap_common_top10_path (str): Absolute path to shap_common_top10.csv (output).
+            top_n (int): Number of top events to keep in the output. Defaults to 10.
+        """
         if not os.path.exists(shap_metrics_path):
             return
 
@@ -81,9 +127,11 @@ class ShapExplainer:
         if metrics_df.empty:
             return
 
+        # Coerce numeric columns to float/int, replacing any parse errors with 0
         metrics_df['Mean_Abs_SHAP'] = pd.to_numeric(metrics_df['Mean_Abs_SHAP'], errors='coerce').fillna(0.0)
         metrics_df['Occurrences_Total'] = pd.to_numeric(metrics_df['Occurrences_Total'], errors='coerce').fillna(0)
 
+        # Build a composite key to count distinct models unambiguously
         metrics_df['Model_Key'] = (
             metrics_df['Process'].astype(str)
             + '|'
@@ -94,6 +142,7 @@ class ShapExplainer:
             + metrics_df['Model_Name'].astype(str)
         )
 
+        # Total number of distinct models in the metrics file (used to normalise Coverage_Rate)
         total_models = metrics_df['Model_Key'].nunique()
 
         aggregated = (
@@ -108,8 +157,11 @@ class ShapExplainer:
             .reset_index()
         )
 
+        # Coverage_Rate: fraction of models in which the event appears (0–1)
         aggregated['Coverage_Rate'] = aggregated['Models_Count'] / total_models if total_models else 0.0
+        # Composite_Score: absolute product of model count and mean SHAP weight
         aggregated['Composite_Score'] = aggregated['Models_Count'] * aggregated['Mean_Weight']
+        # Normalized_Composite_Score: Coverage_Rate × Mean_Weight — comparable across experiments
         aggregated['Normalized_Composite_Score'] = aggregated['Coverage_Rate'] * aggregated['Mean_Weight']
 
         aggregated = aggregated.sort_values(
@@ -131,10 +183,37 @@ class ShapExplainer:
         top_df.to_csv(shap_common_top10_path, index=False)
 
     def _validate_task(self, input_task):
+        """Raise ValueError if the task is not supported by the SHAP explainer.
+
+        Args:
+            input_task (Task): Task enum value loaded from model properties.
+
+        Raises:
+            ValueError: If the task is not NEXT_ACTIVITY or NEXT_MESSAGE_SEND.
+        """
         if input_task not in (Task.NEXT_ACTIVITY, Task.NEXT_MESSAGE_SEND):
             raise ValueError("SHAP Explain is currently available only for classification models.")
 
     def _prepare_prediction_column(self, df, tipo_pred, column1, column2, column3):
+        """Build the prediction target series by combining the relevant log columns.
+
+        For single-column tasks (NextActivity, Participant) returns column1 as-is.
+        For two-column tasks the two columns are concatenated with an underscore.
+        For three-column tasks all three columns are concatenated.
+
+        Args:
+            df (pd.DataFrame): Source event log.
+            tipo_pred (str): Prediction type label.
+            column1 (str): Primary column name.
+            column2 (str): Secondary column name (may be unused).
+            column3 (str): Tertiary column name (may be unused).
+
+        Returns:
+            pd.Series: String series used as the event label for sequence building.
+
+        Raises:
+            ValueError: If a required column is missing or the task is unsupported.
+        """
         if tipo_pred in ("NextActivity", "Participant"):
             missing = [c for c in [column1] if c not in df.columns]
             if missing:
@@ -164,6 +243,19 @@ class ShapExplainer:
         raise ValueError(f"Unsupported prediction type for SHAP explainability: {tipo_pred}")
 
     def _build_case_sequences(self, df, case_id_col, pred_series):
+        """Group log rows into ordered event sequences, one per case.
+
+        Args:
+            df (pd.DataFrame): Source event log.
+            case_id_col (str): Column name that identifies each case.
+            pred_series (pd.Series): String series of normalised event labels.
+
+        Returns:
+            tuple[list, list[list[str]]]: Ordered case IDs and their corresponding event sequences.
+
+        Raises:
+            ValueError: If case_id_col is absent from the DataFrame.
+        """
         if case_id_col not in df.columns:
             raise ValueError(f"Case ID column '{case_id_col}' not found in log file.")
 
@@ -177,30 +269,72 @@ class ShapExplainer:
         return list(cases.keys()), list(cases.values())
 
     def _build_token_x(self, sequences, x_word_dict, max_case_length):
+        """Convert event sequences into a zero-padded integer token matrix.
+
+        Each sequence is left-padded so that the most recent event occupies the
+        last position, matching the training-time sliding-window encoding.
+
+        Args:
+            sequences (list[list[str]]): Ordered event sequences per case.
+            x_word_dict (dict[str, int]): Vocabulary mapping event label → token index.
+            max_case_length (int): Fixed sequence length used during training.
+
+        Returns:
+            np.ndarray: Float32 array of shape (n_cases, max_case_length).
+        """
         token_x = np.zeros((len(sequences), max_case_length), dtype=np.float32)
 
         for row_idx, seq in enumerate(sequences):
             row = np.zeros((max_case_length,), dtype=np.float32)
             for event in seq:
                 token = x_word_dict.get(event, 0)
+                # Slide the window: drop oldest token and append the new one
                 row = np.insert(row[1:], row.size - 1, token)
             token_x[row_idx] = row
 
         return token_x
 
     def _predict_probabilities(self, model, token_x):
+        """Run a forward pass and return softmax class probabilities.
+
+        Args:
+            model (tf.keras.Model): Loaded Keras transformer model.
+            token_x (np.ndarray): Token matrix of shape (n_samples, max_case_length).
+
+        Returns:
+            np.ndarray: Float32 probability matrix of shape (n_samples, n_classes).
+        """
         logits = model.predict(token_x, verbose=0)
         probs = tf.nn.softmax(logits, axis=1).numpy()
         return probs
 
     def _invert_dict(self, data):
+        """Swap keys and values in a dictionary.
+
+        Args:
+            data (dict): Original mapping (e.g. label → index).
+
+        Returns:
+            dict: Inverted mapping (e.g. index → label).
+        """
         return {v: k for k, v in data.items()}
 
     def _load_existing_results(self, detail_csv_path, summary_csv_path, metadata_path):
+        """Load previously computed SHAP results from disc.
+
+        Args:
+            detail_csv_path (str): Path to shap_top_events_per_case.csv.
+            summary_csv_path (str): Path to shap_summary.csv.
+            metadata_path (str): Path to shap_metadata.json.
+
+        Returns:
+            dict: Keys: rows, summary_rows, explained_cases, metadata,
+                  started_at, ended_at, delta_time_sec, delta_time_min.
+        """
         detail_df = pd.read_csv(detail_csv_path)
         summary_df = pd.read_csv(summary_csv_path)
 
-        # Normalize NaN values to empty strings for safe template rendering
+        # Normalise NaN values to empty strings for safe template rendering
         detail_df = detail_df.where(pd.notnull(detail_df), "")
         summary_df = summary_df.where(pd.notnull(summary_df), "")
 
@@ -295,6 +429,32 @@ class ShapExplainer:
         top_k=3,
         mean_abs_decimal_places=6,
     ):
+        """Extract the top-k most influential events per case and aggregate global event importance.
+
+        For each explained case, SHAP values are retrieved for the predicted class,
+        non-padding positions are ranked by absolute value, and the top-k are recorded.
+        An accumulator simultaneously tracks the sum of absolute SHAP values per
+        unique event name to produce a global per-event mean importance summary.
+
+        Args:
+            token_x (np.ndarray): Token matrix (n_cases, max_case_length).
+            case_ids (list): Ordered case identifiers.
+            predicted_idx (np.ndarray): Integer index of the predicted class per case.
+            predicted_labels (list[str]): Human-readable predicted class labels.
+            probs (np.ndarray): Softmax probability matrix (n_cases, n_classes).
+            shap_values: Raw SHAP output — may be list, 2-D or 3-D array depending on SHAP version.
+            inv_x_dict (dict[int, str]): Inverse token vocabulary (index → event label).
+            top_k (int): Number of top events to report per case. Defaults to 3.
+            mean_abs_decimal_places (int): Rounding precision for mean absolute SHAP. Defaults to 6.
+
+        Returns:
+            tuple[list[dict], list[dict]]:
+                - detail rows: one dict per case with case_id, predicted_label,
+                  predicted_confidence, and event_rank_1 … event_rank_k.
+                - summary rows: one dict per unique event with event_name,
+                  mean_abs_shap, occurrences_total, occurrences_percent, cases;
+                  sorted descending by mean_abs_shap.
+        """
         rows = []
         event_importance_acc = defaultdict(lambda: {"sum_abs": 0.0, "count": 0})
         num_samples, num_features = token_x.shape
@@ -311,10 +471,12 @@ class ShapExplainer:
             )
 
             row_tokens = token_x[i]
+            # Only consider non-padding positions (token == 0 means padding)
             nonzero_positions = np.where(row_tokens != 0)[0]
 
             ranked = []
             if len(nonzero_positions) > 0:
+                # Sort real event positions by descending absolute SHAP value
                 ranked_positions = sorted(nonzero_positions, key=lambda p: abs(float(row_shap[p])), reverse=True)
                 ranked_positions = ranked_positions[:top_k]
 
@@ -376,6 +538,33 @@ class ShapExplainer:
         return rows, summary_rows
 
     def explain_model(self, process_name, log_name, prediction_type, model_name, top_k=3, nsamples=100, force_recompute=False):
+        """Run or load SHAP explanations for a trained classification model.
+
+        On the first call (or when force_recompute=True) the method loads the model,
+        builds token sequences from the source log, runs SHAP KernelExplainer, and
+        persists the results. On subsequent calls the cached CSV/JSON files are
+        returned immediately. Either way, the log-level aggregate CSVs
+        (shap_metrics.csv, shap_common_top10.csv) are always refreshed.
+
+        Args:
+            process_name (str): Name of the process folder under the processing directory.
+            log_name (str): Name of the event log (also used as the CSV filename).
+            prediction_type (str): Prediction task (e.g. 'NextActivity', 'ParticipantSend').
+            model_name (str): Model folder name and base name for the .keras file.
+            top_k (int): Top events to report per case in the detail CSV. Defaults to 3.
+            nsamples (int): Number of perturbation samples for KernelExplainer. Defaults to 100.
+            force_recompute (bool): Ignore cached results and recompute from scratch. Defaults to False.
+
+        Returns:
+            dict: Contains output_dir, detail_csv_path, summary_csv_path, metadata_path,
+                  shap_metrics_path, shap_common_top10_path, rows, summary_rows,
+                  explained_cases, model, prediction_type, cached, started_at,
+                  ended_at, delta_time_sec, delta_time_min.
+
+        Raises:
+            ValueError: If required files are missing, the task is unsupported,
+                        or the 'shap' package is not installed.
+        """
         started_at_utc = datetime.utcnow()
 
         try:
@@ -490,7 +679,9 @@ class ShapExplainer:
         predicted_labels = [inv_y_dict.get(int(idx), str(idx)) for idx in predicted_idx]
 
         max_cases = get_shap_max_cases()
+        # Background: a small representative subset used to marginalise out features
         background_size = min(30, token_x.shape[0])
+        # Limit the number of explained cases to avoid excessively long runtimes
         explain_size = min(max_cases, token_x.shape[0])
         background = token_x[:background_size]
         explain_samples = token_x[:explain_size]
