@@ -21,6 +21,10 @@ def load_config(config_path='config.yml'):
         FileNotFoundError: If configuration file is not found
         yaml.YAMLError: If configuration file has invalid YAML syntax
     """
+    if not os.path.isabs(config_path):
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        config_path = os.path.join(current_dir, config_path)
+
     with open(config_path, 'r') as file:
         config = yaml.safe_load(file)
     return config
@@ -92,3 +96,43 @@ def get_shap_max_cases():
     """
     config = load_config()
     return int(config.get('xai', {}).get('shap', {}).get('max_cases', 200))
+
+
+def get_ollama_generate_url():
+    """Get the Ollama generate endpoint URL from configuration.
+
+    Returns:
+        str: Ollama generate API URL
+    """
+    config = load_config()
+    return config.get('xai', {}).get('ollama', {}).get('generate_url', 'http://127.0.0.1:11434/api/generate')
+
+
+def get_ollama_model_name():
+    """Get the Ollama model name from configuration.
+
+    Returns:
+        str: Ollama model name
+    """
+    config = load_config()
+    return config.get('xai', {}).get('ollama', {}).get('model_name', 'llama3.2:1b')
+
+
+def get_ollama_temperature():
+    """Get the Ollama temperature from configuration.
+
+    Returns:
+        float: Ollama temperature value
+    """
+    config = load_config()
+    return float(config.get('xai', {}).get('ollama', {}).get('temperature', 0))
+
+
+def get_ollama_explain_enabled():
+    """Get whether LLM explanation generation is enabled.
+
+    Returns:
+        bool: True if LLM explanations should be executed, otherwise False
+    """
+    config = load_config()
+    return bool(config.get('xai', {}).get('ollama', {}).get('explain', True))

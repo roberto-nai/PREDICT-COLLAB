@@ -28,6 +28,7 @@
 <h1 class="titulosPantallas">SHAP Explainability Results</h1>
 
 <div class="contenedor-tabla-predicciones shap-results-container">
+    <h2 class="titulos2Pantallas" style="margin-top: 0;">Explanation metadata</h2>
     <p><strong>Process:</strong> {{ proceso }}</p>
     <p><strong>Log:</strong> {{ log }}</p>
     <p><strong>Model:</strong> {{ modelo }}</p>
@@ -43,7 +44,51 @@
         <li>{{ metadata_path }}</li>
     </ul>
 
-    <h2 class="titulos2Pantallas">Top events per case</h2>
+    <h2 class="titulos2Pantallas" style="margin-top: 25px;">Global event summary - Explanation</h2>
+    <p style="margin-top: 6px; margin-bottom: 10px;">
+        <strong>Model name:</strong> {{ shap_llm_model_name }}
+        &nbsp;|&nbsp;
+        <strong>Time to answer (sec):</strong> {{ shap_llm_elapsed_sec }}
+        &nbsp;|&nbsp;
+        <strong>Time to answer (min):</strong> {{ shap_llm_elapsed_min }}
+    </p>
+    <div style="margin-top: 12px; padding: 16px 16px; border: 1px solid #d7d7d7; border-radius: 8px; background: #fafafa; display: flex; align-items: center; min-height: 120px; text-align: left;">
+        {% if shap_llm_explanation %}
+        <p style="margin: 0; line-height: 1.6; width: 100%;">{{ shap_llm_explanation }}</p>
+        {% else %}
+        <p style="margin: 0; line-height: 1.6; width: 100%;">
+            The automatic explanation is currently unavailable.
+            {% if shap_llm_error %}Reason: {{ shap_llm_error }}{% endif %}
+        </p>
+        {% endif %}
+    </div>
+
+    <h2 class="titulos2Pantallas" style="margin-top: 25px;">Global event summary - Details</h2>
+    <table class="tablaPredicciones">
+        <caption>Mean absolute SHAP by event</caption>
+        <thead>
+            <tr>
+                <th>Event</th>
+                <th>Mean abs SHAP</th>
+                <th>Occurrences total</th>
+                <th>Occurrences %</th>
+                <th>Cases</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in shap_summary_rows %}
+            <tr>
+                <td>{{ row.event_name }}</td>
+                <td>{{ row.mean_abs_shap }}</td>
+                <td>{{ row.occurrences_total }}</td>
+                <td>{{ "%.2f"|format(row.occurrences_percent) }}</td>
+                <td>{{ row.cases }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2 class="titulos2Pantallas" style="margin-top: 25px;">Case event summary</h2>
     <table class="tablaPredicciones">
         <caption>SHAP top event importance by case</caption>
         <thead>
@@ -65,31 +110,6 @@
                 <td>{{ row.event_rank_1 }}</td>
                 <td>{{ row.event_rank_2 }}</td>
                 <td>{{ row.event_rank_3 }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <h2 class="titulos2Pantallas" style="margin-top: 25px;">Global event summary</h2>
-    <table class="tablaPredicciones">
-        <caption>Mean absolute SHAP by event</caption>
-        <thead>
-            <tr>
-                <th>Event</th>
-                <th>Mean abs SHAP</th>
-                <th>Occurrences total</th>
-                <th>Occurrences %</th>
-                <th>Cases</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for row in shap_summary_rows %}
-            <tr>
-                <td>{{ row.event_name }}</td>
-                <td>{{ row.mean_abs_shap }}</td>
-                <td>{{ row.occurrences_total }}</td>
-                <td>{{ "%.2f"|format(row.occurrences_percent) }}</td>
-                <td>{{ row.cases }}</td>
             </tr>
             {% endfor %}
         </tbody>

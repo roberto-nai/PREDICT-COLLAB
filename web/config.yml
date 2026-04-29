@@ -39,3 +39,8 @@ prediction:
 xai:
   shap:
     max_cases: 300 # Maximum number of cases to explain with SHAP (to limit computation time)
+  ollama:
+    explain: true # Enable or disable LLM-generated SHAP explanations
+    generate_url: "http://127.0.0.1:11434/api/generate"
+    model_name: "llama3.2:latest" # Ollama model to use for explanations
+    temperature: 0 # Deterministic generation for SHAP explanations

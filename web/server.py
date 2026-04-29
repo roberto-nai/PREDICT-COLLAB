@@ -5,6 +5,7 @@ Handles routing, file uploads, and interactions with models and logs.
 import io
 import shutil
 import logging
+import time
 from logging.handlers import RotatingFileHandler
 
 from flask import Flask, render_template, request, redirect, url_for, send_file, jsonify, abort
@@ -17,9 +18,10 @@ from Logs import *
 from Predicciones import *
 from PrediccionesTime import *
 from Explainability import ShapExplainer
+from ExplainabilityLLM import ExplainabilityLLM
 from FuncionesAuxiliares import *
 from processtransformer import constants
-from ConfigLoader import load_config, get_processing_dir, get_staging_dir
+from ConfigLoader import load_config, get_processing_dir, get_staging_dir, get_ollama_explain_enabled
 
 
 def _fmt_shap_dt(iso_str):
@@ -31,6 +33,17 @@ def _fmt_shap_dt(iso_str):
         return datetime.fromisoformat(iso_str.rstrip('Z')).strftime('%Y-%m-%d %H:%M:%S')
     except (ValueError, AttributeError):
         return iso_str
+
+
+def _fmt_min_sec(total_seconds):
+    """Format elapsed seconds as mm.ss."""
+    try:
+        total_seconds = max(0, int(round(float(total_seconds))))
+    except (TypeError, ValueError):
+        return '00.00'
+    minutes = total_seconds // 60
+    seconds = total_seconds % 60
+    return f'{minutes:02d}.{seconds:02d}'
 
 app = Flask(__name__)
 
@@ -790,6 +803,33 @@ def explain_model():
             nsamples=100,
         )
 
+        llm_model_name = ''
+        llm_elapsed_sec = '0.00'
+        llm_elapsed_min = '0.00'
+
+        if get_ollama_explain_enabled():
+            llm_explainer = ExplainabilityLLM()
+            llm_model_name = llm_explainer.model_name
+            llm_started = time.perf_counter()
+            llm_result = llm_explainer.generate_global_summary_explanation(
+                process_name=proceso,
+                log_name=log,
+                prediction_type=tipo_prediccion,
+                model_name=modelo,
+                explained_cases=result['explained_cases'],
+                summary_rows=result['summary_rows'],
+            )
+            llm_elapsed_total_sec = max(0.0, time.perf_counter() - llm_started)
+            llm_elapsed_sec = f'{llm_elapsed_total_sec:.2f}'
+            llm_elapsed_min = f'{(llm_elapsed_total_sec / 60):.2f}'
+        else:
+            llm_model_name = 'Disabled by config'
+            llm_result = {
+                'success': False,
+                'text': '',
+                'error': 'LLM explanation execution is disabled in the configuration.',
+            }
+
         return render_template(
             'shap_results.html',
             proceso=proceso,
@@ -803,6 +843,11 @@ def explain_model():
             detail_csv_path=result['detail_csv_path'],
             summary_csv_path=result['summary_csv_path'],
             metadata_path=result['metadata_path'],
+            shap_llm_explanation=llm_result.get('text', ''),
+            shap_llm_error=llm_result.get('error', ''),
+            shap_llm_model_name=llm_model_name,
+            shap_llm_elapsed_sec=llm_elapsed_sec,
+            shap_llm_elapsed_min=llm_elapsed_min,
             cached=result.get('cached', False),
             started_at=_fmt_shap_dt(result.get('started_at', '')),
             ended_at=_fmt_shap_dt(result.get('ended_at', '')),
