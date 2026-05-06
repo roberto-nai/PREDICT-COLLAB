@@ -5,8 +5,8 @@ selected model to generate a short narrative explanation of the SHAP global
 event summary.
 """
 
-import json
-from urllib import error, request
+import ollama
+from urllib.parse import urlparse
 
 from ConfigLoader import get_ollama_generate_url, get_ollama_model_name, get_ollama_temperature
 
@@ -32,6 +32,9 @@ class ExplainabilityLLM:
         self.model_name = model_name or get_ollama_model_name()
         self.temperature = get_ollama_temperature() if temperature is None else float(temperature)
         self.timeout = timeout
+        parsed = urlparse(self.base_url)
+        ollama_host = f"{parsed.scheme}://{parsed.netloc}"
+        self._client = ollama.Client(host=ollama_host, timeout=self.timeout)
 
     def _build_prompt(self, process_name, log_name, prediction_type, model_name, explained_cases, summary_rows):
         """Create a compact prompt describing the SHAP global event summary.
@@ -108,42 +111,27 @@ class ExplainabilityLLM:
             summary_rows=summary_rows,
         )
 
-        payload = json.dumps(
-            {
-                'model': self.model_name,
-                'prompt': prompt,
-                'stream': False,
-                'options': {
-                    'temperature': self.temperature,
-                },
-            }
-        ).encode('utf-8')
-
-        http_request = request.Request(
-            self.base_url,
-            data=payload,
-            headers={'Content-Type': 'application/json'},
-            method='POST',
-        )
-
         try:
-            with request.urlopen(http_request, timeout=self.timeout) as response:
-                body = response.read().decode('utf-8')
-                data = json.loads(body)
-                text = data.get('response', '').strip()
-                if not text:
-                    return {
-                        'success': False,
-                        'text': '',
-                        'error': 'Ollama returned an empty response.',
-                    }
-
+            response = self._client.generate(
+                model=self.model_name,
+                prompt=prompt,
+                stream=False,
+                options={'temperature': self.temperature},
+            )
+            text = response.response.strip()
+            if not text:
                 return {
-                    'success': True,
-                    'text': text,
-                    'error': '',
+                    'success': False,
+                    'text': '',
+                    'error': 'Ollama returned an empty response.',
                 }
-        except error.URLError as exc:
+
+            return {
+                'success': True,
+                'text': text,
+                'error': '',
+            }
+        except ollama.RequestError as exc:
             return {
                 'success': False,
                 'text': '',
