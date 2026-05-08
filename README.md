@@ -21,6 +21,23 @@ We provide collaborative predictions for:
 - Process remaining time
 - Participant remaining time
 
+## SHAP Update (Work in progress)
+
+The current SHAP implementation explains classification models through SHAP KernelExplainer.
+To keep runtime manageable, explanations are currently computed on a subset of cases (configurable),
+using a small background sample for the explainer.
+
+For each explained model, the SHAP run generates:
+
+1. `shap_metadata.json`: run configuration and timing metadata.
+2. `shap_top_events_per_case.csv`: top-3 influential events per case (`event_rank_1..3`), ranked by absolute SHAP impact on the predicted class.
+   - Format: `pos=<real position in trace> | event=<event label> | shap=<SHAP value>`
+   - Positive SHAP pushes towards the predicted class; negative SHAP pushes against it; larger absolute values indicate stronger influence.
+3. `shap_summary.csv`: per-model global summary by event (`event_name`, `mean_abs_shap`, `occurrences_total`, `occurrences_percent`, `cases`).
+
+SHAP results are available from the web interface and stored under:
+`./processing/process_name/log_name/prediction_task/model_name/shap/`
+
 
 > **Paper:** Daniel Calegari, Andrea Delgado: Extending predictive process monitoring for collaborative processes. CoRR abs/2409.09212 (2024) [LINK](https://arxiv.org/abs/2409.09212)
 
@@ -84,6 +101,11 @@ The project is organized in the following directories:
 3. **trazas/** (staging) - Stores the partial trace files uploaded through the web application for prediction processing.
 
 4. **processing/** - Stores the prediction model processing outputs for each individual event log.
+    - Model artefacts are stored by task and model, e.g. `processing/process_name/log_name/prediction_task/model_name/`
+    - SHAP outputs for each model are stored in `processing/process_name/log_name/prediction_task/model_name/shap/`
+       and include `shap_metadata.json`, `shap_top_events_per_case.csv`, and `shap_summary.csv`
+    - Log-level SHAP aggregates are stored in `processing/process_name/log_name/` as
+       `shap_metrics.csv` and `shap_common_top10.csv`
 
 
 ## References

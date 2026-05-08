@@ -61,7 +61,7 @@ def save_model_metrics_to_csv(log_folder_path, process_name, log_file_name, mode
     
     # Define all possible columns in a fixed order
     fieldnames = ['Model_Name', 'Timestamp', 'Process', 'File', 'Prediction_Type', 
-                  'Accuracy', 'F-Score', 'Precision', 'Recall',
+                  'Accuracy', 'F1-Score', 'Precision', 'Recall',
                   'MAE', 'MSE', 'RMSE']
     
     # Prepare row data with all metrics
@@ -77,7 +77,7 @@ def save_model_metrics_to_csv(log_folder_path, process_name, log_file_name, mode
             'Model_Name': model_name,
             'Prediction_Type': prediction_type,
             'Accuracy': round_metric(metric1),
-            'F-Score': round_metric(metric2),
+            'F1-Score': round_metric(metric2),
             'Precision': round_metric(metric3),
             'Recall': round_metric(metric4),
             'MAE': -1,
@@ -93,7 +93,7 @@ def save_model_metrics_to_csv(log_folder_path, process_name, log_file_name, mode
             'Model_Name': model_name,
             'Prediction_Type': prediction_type,
             'Accuracy': -1,
-            'F-Score': -1,
+            'F1-Score': -1,
             'Precision': -1,
             'Recall': -1,
             'MAE': round_metric(metric1),

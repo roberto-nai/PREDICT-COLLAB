@@ -47,3 +47,26 @@
 ## 2026-04-22
 - Added `participant_fetch_limit` in config.yml to configure the maximum number of participants returned by `/obtener_participantes`.
 - Added a `Config` entry in the navbar to display the contents of `config.yml`.
+
+## 2026-04-23
+- Added an explanations module (`Explainability.py`) to compute SHAP explainability for trained classification models and export detail/summary/metadata outputs.
+  -- Builds SHAP explanations over event-sequence inputs for classification models/predictions (`NEXT_ACTIVITY` and `NEXT_MESSAGE_SEND`) to highlight the most influential events for each predicted case.
+  -- Uses class-specific SHAP attributions per case to quantify each event's positive/negative contribution and rank the top-k most impactful sequence positions.
+  -- Produces reusable outputs (top-events per case, global summary, and metadata with timings) saved in each model's SHAP folder. Uses cached SHAP files when available to avoid recomputation and speed up result visualization in the web UI.
+- Added `/explain_model` route to run/load SHAP explanations and render the results page in the web UI.
+- Added log-level SHAP aggregate exports alongside `models_metrics.csv`.
+  -- `shap_metrics.csv` is stored in each log folder (`processing/process_name/log_name/`) and collects the top-10 SHAP events for every explained model/task.
+  -- The file is maintained with upsert semantics: rerunning SHAP for the same process/log/task/model replaces the previous top-10 rows instead of creating duplicates.
+  -- Each row contains the model identity, prediction task, event rank, event name, mean absolute SHAP weight, occurrence count, occurrence percentage, and number of explained cases.
+- Added global cross-model SHAP aggregation export.
+  -- `shap_common_top10.csv` is generated in the same log folder and summarizes the most recurrent and influential events across all rows currently stored in `shap_metrics.csv`.
+  -- For each event, the aggregation reports mean SHAP weight, median SHAP weight, number of distinct models in which the event appears (`Models_Count`), number of distinct tasks (`Tasks_Count`), and total occurrences.
+  -- The global ranking now includes `Coverage_Rate = Models_Count / Total_Models`, which explicitly represents cross-model coverage and makes coverage directly comparable across experiments with different numbers of trained models.
+  -- The global ranking includes `Composite_Score = Models_Count x Mean_Weight`, intended to prioritize events that are both frequent across models and strongly influential in SHAP magnitude.
+  -- The global ranking also includes `Normalized_Composite_Score = Coverage_Rate x Mean_Weight`, which normalizes the composite ranking by the total number of available models and supports fairer comparisons across different experimental settings.
+  -- Interpretation: high `Composite_Score` values identify events that are globally robust explanatory signals, rather than events that are important only for a single model.
+  -- Interpretation: `Coverage_Rate` separates model coverage from attribution intensity, while `Mean_Weight` preserves effect magnitude; together they make the aggregated explanation easier to analyze and report.
+  -- Methodological note: `Composite_Score` and `Normalized_Composite_Score` are heuristic ranking indices for global interpretability. They are useful for comparative analysis and scientific reporting, but they should be discussed as stability-and-strength indicators rather than as causal or probabilistic measures.
+ 
+ ## 2026-04-29
+  -- Added integration with a local LLM via Ollama to generate automatic natural-language explanations for the SHAP global event summary.
