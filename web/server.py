@@ -35,6 +35,38 @@ def _fmt_shap_dt(iso_str):
         return iso_str
 
 
+def _shorten_shap_path(full_path, prediction_type):
+    """Return the path segment starting from the prediction type directory.
+
+    E.g. '/.../.../Participant/model_5/shap/file.csv' → 'Participant/model_5/shap/file.csv'
+    Falls back to the full path if the marker is not found.
+    """
+    if not full_path or not prediction_type:
+        return full_path
+    marker = f"/{prediction_type}/"
+    idx = full_path.find(marker)
+    return full_path[idx + 1:] if idx != -1 else full_path
+
+
+def _event_name_from_rank(rank_str):
+    """Extract the event name from a rank string like 'pos=1 | event=Foo | shap=0.12'."""
+    if not rank_str:
+        return None
+    for part in rank_str.split(' | '):
+        if part.startswith('event='):
+            return part[len('event='):]
+    return None
+
+
+def _sort_shap_rows_by_event_diversity(rows, top_k=3):
+    """Sort rows so that cases with more distinct events across ranks appear first."""
+    def _diversity_key(row):
+        events = [_event_name_from_rank(row.get(f'event_rank_{i}', '')) for i in range(1, top_k + 1)]
+        distinct = len(set(e for e in events if e is not None))
+        return -distinct  # more distinct → lower key → sorts first
+    return sorted(rows, key=_diversity_key)
+
+
 def _fmt_min_sec(total_seconds):
     """Format elapsed seconds as mm.ss."""
     try:
@@ -806,11 +838,11 @@ def explain_model():
         llm_model_name = ''
         llm_elapsed_sec = '0.00'
         llm_elapsed_min = '0.00'
+        llm_total_tokens = ''
 
         if get_ollama_explain_enabled():
             llm_explainer = ExplainabilityLLM()
             llm_model_name = llm_explainer.model_name
-            llm_started = time.perf_counter()
             llm_result = llm_explainer.generate_global_summary_explanation(
                 process_name=proceso,
                 log_name=log,
@@ -818,10 +850,22 @@ def explain_model():
                 model_name=modelo,
                 explained_cases=result['explained_cases'],
                 summary_rows=result['summary_rows'],
+                output_dir=result['output_dir'],
             )
-            llm_elapsed_total_sec = max(0.0, time.perf_counter() - llm_started)
-            llm_elapsed_sec = f'{llm_elapsed_total_sec:.2f}'
-            llm_elapsed_min = f'{(llm_elapsed_total_sec / 60):.2f}'
+            # Use times from llm_result if available, otherwise fallback
+            llm_elapsed_sec = llm_result.get('delta_time_sec', '')
+            llm_elapsed_min = llm_result.get('delta_time_min', '')
+            if not llm_elapsed_sec:
+                llm_elapsed_sec = '0.00'
+            if not llm_elapsed_min:
+                llm_elapsed_min = '0.00'
+            llm_model_name = llm_result.get('llm_model_name', llm_explainer.model_name)
+            
+            # Calculate total tokens if available
+            input_tokens = llm_result.get('input_tokens')
+            output_tokens = llm_result.get('output_tokens')
+            if input_tokens is not None and output_tokens is not None:
+                llm_total_tokens = input_tokens + output_tokens
         else:
             llm_model_name = 'Disabled by config'
             llm_result = {
@@ -830,6 +874,8 @@ def explain_model():
                 'error': 'LLM explanation execution is disabled in the configuration.',
             }
 
+        sorted_shap_rows = _sort_shap_rows_by_event_diversity(result['rows'])
+
         return render_template(
             'shap_results.html',
             proceso=proceso,
@@ -837,17 +883,18 @@ def explain_model():
             tipo_prediccion=tipo_prediccion,
             modelo=modelo,
             explained_cases=result['explained_cases'],
-            shap_rows=result['rows'],
+            shap_rows=sorted_shap_rows,
             shap_summary_rows=result['summary_rows'],
-            output_dir=result['output_dir'],
-            detail_csv_path=result['detail_csv_path'],
-            summary_csv_path=result['summary_csv_path'],
-            metadata_path=result['metadata_path'],
+            output_dir=_shorten_shap_path(result['output_dir'], tipo_prediccion),
+            detail_csv_path=_shorten_shap_path(result['detail_csv_path'], tipo_prediccion),
+            summary_csv_path=_shorten_shap_path(result['summary_csv_path'], tipo_prediccion),
+            metadata_path=_shorten_shap_path(result['metadata_path'], tipo_prediccion),
             shap_llm_explanation=llm_result.get('text', ''),
             shap_llm_error=llm_result.get('error', ''),
             shap_llm_model_name=llm_model_name,
             shap_llm_elapsed_sec=llm_elapsed_sec,
             shap_llm_elapsed_min=llm_elapsed_min,
+            shap_llm_total_tokens=llm_total_tokens,
             cached=result.get('cached', False),
             started_at=_fmt_shap_dt(result.get('started_at', '')),
             ended_at=_fmt_shap_dt(result.get('ended_at', '')),

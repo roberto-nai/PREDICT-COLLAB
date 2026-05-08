@@ -12,6 +12,21 @@
             max-width: 80%;
             margin: 0 auto;
         }
+
+        .shap-results-title {
+            width: 80%;
+            max-width: 80%;
+            margin: 14px auto 20px;
+            margin-left: auto;
+        }
+
+        .shap-section-title {
+            margin-top: 28px;
+        }
+
+        .shap-section-title.is-first {
+            margin-top: 8px;
+        }
     </style>
 </head>
 
@@ -25,15 +40,14 @@
     <a href="{{ url_for('show_config') }}" class="inicio config-link">Config</a>
 </div>
 
-<h1 class="titulosPantallas">SHAP Explainability Results</h1>
+<h1 class="titulosPantallas shap-results-title">SHAP Explainability Results</h1>
 
 <div class="contenedor-tabla-predicciones shap-results-container">
-    <h2 class="titulos2Pantallas" style="margin-top: 0;">Explanation metadata</h2>
+    <h2 class="titulos2Pantallas shap-section-title is-first">Explanation metadata</h2>
     <p><strong>Process:</strong> {{ proceso }}</p>
     <p><strong>Log:</strong> {{ log }}</p>
     <p><strong>Model:</strong> {{ modelo }}</p>
     <p><strong>Prediction type:</strong> {{ tipo_prediccion }}</p>
-    <p><strong>Explained cases:</strong> {{ explained_cases }}</p>
     <p><strong>Source:</strong> {% if cached %}Loaded from existing SHAP results{% else %}Computed now{% endif %}</p>
     <p><strong>Started at:</strong> {{ started_at }} &nbsp;|&nbsp; <strong>Ended at:</strong> {{ ended_at }} &nbsp;|&nbsp; <strong>Delta time (sec):</strong> {{ delta_time_sec }} &nbsp;|&nbsp; <strong>Delta time (min):</strong> {{ delta_time_min }}</p>
     <p><strong>Saved outputs:</strong> {{ output_dir }}</p>
@@ -44,13 +58,17 @@
         <li>{{ metadata_path }}</li>
     </ul>
 
-    <h2 class="titulos2Pantallas" style="margin-top: 25px;">Global event summary - Explanation</h2>
+    <h2 class="titulos2Pantallas shap-section-title">Global event summary - Explanation</h2>
     <p style="margin-top: 6px; margin-bottom: 10px;">
         <strong>Model name:</strong> {{ shap_llm_model_name }}
         &nbsp;|&nbsp;
         <strong>Time to answer (sec):</strong> {{ shap_llm_elapsed_sec }}
         &nbsp;|&nbsp;
         <strong>Time to answer (min):</strong> {{ shap_llm_elapsed_min }}
+        {% if shap_llm_total_tokens %}
+        &nbsp;|&nbsp;
+        <strong>Total tokens (input + output):</strong> {{ shap_llm_total_tokens }}
+        {% endif %}
     </p>
     <div style="margin-top: 12px; padding: 16px 16px; border: 1px solid #d7d7d7; border-radius: 8px; background: #fafafa; display: flex; align-items: center; min-height: 120px; text-align: left;">
         {% if shap_llm_explanation %}
@@ -63,39 +81,43 @@
         {% endif %}
     </div>
 
-    <h2 class="titulos2Pantallas" style="margin-top: 25px;">Global event summary - Details</h2>
+    <h2 class="titulos2Pantallas shap-section-title">Global event summary - Details</h2>
     <table class="tablaPredicciones">
         <caption>Mean absolute SHAP by event</caption>
         <thead>
             <tr>
+                <th style="width: 40px;">Rank</th>
                 <th>Event</th>
                 <th>Mean abs SHAP</th>
-                <th>Occurrences total</th>
-                <th>Occurrences %</th>
-                <th>Cases</th>
             </tr>
         </thead>
         <tbody>
-            {% for row in shap_summary_rows %}
-            <tr>
+            {% for row in shap_summary_rows[:10] %}
+            <tr{% if loop.index > 5 %} class="shap-summary-extra" style="display:none;"{% endif %}>
+                <td style="text-align: center;">{{ loop.index }}</td>
                 <td>{{ row.event_name }}</td>
                 <td>{{ row.mean_abs_shap }}</td>
-                <td>{{ row.occurrences_total }}</td>
-                <td>{{ "%.2f"|format(row.occurrences_percent) }}</td>
-                <td>{{ row.cases }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+    {% if shap_summary_rows|length > 5 %}
+    <button type="button" id="shap-summary-toggle" onclick="
+        var rows = document.querySelectorAll('.shap-summary-extra');
+        var btn = document.getElementById('shap-summary-toggle');
+        var hidden = rows[0].style.display === 'none';
+        rows.forEach(function(r){ r.style.display = hidden ? '' : 'none'; });
+        btn.textContent = hidden ? 'Show less' : 'Show more';
+    " style="margin-top:8px; cursor:pointer;">Show more</button>
+    {% endif %}
 
-    <h2 class="titulos2Pantallas" style="margin-top: 25px;">Case event summary</h2>
+    <h2 class="titulos2Pantallas shap-section-title">Case event summary</h2>
     <table class="tablaPredicciones">
         <caption>SHAP top event importance by case</caption>
         <thead>
             <tr>
                 <th>Case</th>
                 <th>Predicted label</th>
-                <th>Confidence</th>
                 <th>Event rank 1</th>
                 <th>Event rank 2</th>
                 <th>Event rank 3</th>
@@ -106,7 +128,6 @@
             <tr>
                 <td>{{ row.case_id }}</td>
                 <td>{{ row.predicted_label }}</td>
-                <td>{{ "%.4f"|format(row.predicted_confidence) }}</td>
                 <td>{{ row.event_rank_1 }}</td>
                 <td>{{ row.event_rank_2 }}</td>
                 <td>{{ row.event_rank_3 }}</td>

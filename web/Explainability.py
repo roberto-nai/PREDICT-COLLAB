@@ -79,7 +79,6 @@ class ShapExplainer:
                     'Mean_Abs_SHAP': float(item.get('mean_abs_shap', 0.0)),
                     'Occurrences_Total': int(item.get('occurrences_total', 0)),
                     'Occurrences_Percent': float(item.get('occurrences_percent', 0.0)),
-                    'Cases': int(item.get('cases', 0)),
                 }
             )
 
@@ -452,11 +451,11 @@ class ShapExplainer:
                 - detail rows: one dict per case with case_id, predicted_label,
                   predicted_confidence, and event_rank_1 … event_rank_k.
                 - summary rows: one dict per unique event with event_name,
-                  mean_abs_shap, occurrences_total, occurrences_percent, cases;
+                  mean_abs_shap, occurrences_total (distinct cases), occurrences_percent;
                   sorted descending by mean_abs_shap.
         """
         rows = []
-        event_importance_acc = defaultdict(lambda: {"sum_abs": 0.0, "count": 0})
+        event_importance_acc = defaultdict(lambda: {"sum_abs": 0.0, "count": 0, "cases_set": set()})
         num_samples, num_features = token_x.shape
         total_cases_considered = len(case_ids)
 
@@ -498,6 +497,7 @@ class ShapExplainer:
 
                     event_importance_acc[event_name]["sum_abs"] += abs(shap_val)
                     event_importance_acc[event_name]["count"] += 1
+                    event_importance_acc[event_name]["cases_set"].add(case_id)
 
             row = {
                 "case_id": str(case_id),
@@ -521,15 +521,15 @@ class ShapExplainer:
         summary_rows = []
         for event_name, data in event_importance_acc.items():
             count = data["count"]
+            distinct_cases = len(data["cases_set"])
             mean_abs = data["sum_abs"] / count if count else 0.0
-            per_occurrences = round((count / total_cases_considered) * 100, 2) if total_cases_considered else 0.0
+            per_occurrences = round((distinct_cases / total_cases_considered) * 100, 2) if total_cases_considered else 0.0
             summary_rows.append(
                 {
                     "event_name": event_name,
                     "mean_abs_shap": round(mean_abs, mean_abs_decimal_places),
-                    "occurrences_total": int(count),
+                    "occurrences_total": distinct_cases,
                     "occurrences_percent": per_occurrences,
-                    "cases": int(total_cases_considered),
                 }
             )
 
