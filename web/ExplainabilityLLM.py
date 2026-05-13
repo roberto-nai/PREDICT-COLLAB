@@ -11,7 +11,7 @@ from datetime import datetime
 import json
 import os
 
-from ConfigLoader import get_ollama_generate_url, get_ollama_model_name, get_ollama_temperature
+from ConfigLoader import get_ollama_generate_url, get_ollama_model_name, get_ollama_temperature, get_prompts_dir
 
 
 class ExplainabilityLLM:
@@ -20,6 +20,10 @@ class ExplainabilityLLM:
     The class targets a local Ollama server and is intentionally isolated from
     the core SHAP pipeline so that prompting behaviour can be adjusted without
     touching the explainer logic itself.
+
+    # The prompt text is not hard-coded here. It is loaded at runtime from an
+    # external template file (prompts/shap_global_summary.txt), whose location
+    # is resolved via the 'directories.prompts' entry in config.yml.
     """
 
     def __init__(self, base_url=None, model_name=None, temperature=None, timeout=30):
@@ -42,6 +46,10 @@ class ExplainabilityLLM:
     def _build_prompt(self, process_name, log_name, prediction_type, model_name, explained_cases, summary_rows):
         """Create a compact prompt describing the SHAP global event summary.
 
+        The prompt text is loaded from the template file
+        ``prompts/shap_global_summary.txt`` (path resolved via config.yml).
+        Variables in the template use Python ``str.format()`` placeholders.
+
         Args:
             process_name (str): Process name.
             log_name (str): Log name.
@@ -63,29 +71,20 @@ class ExplainabilityLLM:
                 )
             )
 
-        return (
-            "You are explaining SHAP results for a predictive process monitoring model. "
-            "Write one short paragraph in British English for a web interface. "
-            "Keep it factual, readable, and non-technical where possible. "
-            "Mention the top-5 most influential events based only on mean_abs_shap. "
-            "Use mean_abs_shap as the only criterion to compare influence across events. "
-            "Ignore occurrences_percent and occurrences_total entirely. "
-            "Do not invent facts, causes, or relationships that are not explicitly supported by the input. "
-            "Do not infer causal relationships or criticality from any frequency information. "
-            "When rendering event names, convert concatenated or multi-word forms into readable words with spaces, using sentence case. "
-            "Use first word initial uppercase and all following words lowercase (e.g., 'nursingtreatment' -> 'Nursing treatment'). "
-            "When reporting numerical values from the SHAP summary, round them to 3 decimal places (e.g., 0.296 instead of 0.29607). "
-            "Whenever you mention an event name or any value taken from the event log or SHAP summary, wrap it in single quotes. "
-            "Return only the final paragraph text, with no preface or heading. "
-            "Do not start with phrases like 'Here\'s a paragraph...' or similar introductions. "
-            "Do not use bullet points. Do not mention being an AI.\n\n"
-            f"Process: {process_name}\n"
-            f"Log: {log_name}\n"
-            f"Prediction type: {prediction_type}\n"
-            f"Model: {model_name}\n"
-            f"Explained cases: {explained_cases}\n\n"
-            "Top-5 events from shap_summary.csv (ranked by mean_abs_shap):\n"
-            + "\n".join(rows_text)
+        # Load the prompt template from the external file defined in config.yml
+        # (directories.prompts → prompts/shap_global_summary.txt) and inject
+        # the run-time variables via str.format() placeholders.
+        prompt_path = os.path.join(get_prompts_dir(), 'shap_global_summary.txt')
+        with open(prompt_path, 'r', encoding='utf-8') as f:
+            template = f.read()
+
+        return template.format(
+            process_name=process_name,
+            log_name=log_name,
+            prediction_type=prediction_type,
+            model_name=model_name,
+            explained_cases=explained_cases,
+            rows_text='\n'.join(rows_text),
         )
 
     def _sanitize_generated_text(self, text):

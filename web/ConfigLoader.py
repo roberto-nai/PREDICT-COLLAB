@@ -76,6 +76,18 @@ def get_max_decimal_places():
     return config.get('prediction', {}).get('max_decimal_places', 5)
 
 
+def get_prompts_dir():
+    """Get the absolute path to the prompts directory.
+
+    Returns:
+        str: Absolute path to the prompts directory (inside web/).
+    """
+    config = load_config()
+    prompts_dir_name = config.get('directories', {}).get('prompts', 'prompts')
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(current_dir, prompts_dir_name)
+
+
 def get_shap_explanations_dirname():
     """
     Get the folder name used to store SHAP explainability outputs inside each model folder.
