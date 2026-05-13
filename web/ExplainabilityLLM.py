@@ -53,16 +53,13 @@ class ExplainabilityLLM:
         Returns:
             str: Prompt ready to be sent to the LLM.
         """
-        top_rows = summary_rows[:10]
+        top_rows = summary_rows[:5]
         rows_text = []
         for idx, row in enumerate(top_rows, start=1):
             rows_text.append(
                 (
                     f"{idx}. event='{row.get('event_name', '')}'; "
-                    f"mean_abs_shap={row.get('mean_abs_shap', '')}; "
-                    f"occurrences_total={row.get('occurrences_total', '')}; "
-                    f"occurrences_percent={row.get('occurrences_percent', '')}; "
-                    f"cases={row.get('cases', '')}"
+                    f"mean_abs_shap={row.get('mean_abs_shap', '')}"
                 )
             )
 
@@ -70,11 +67,13 @@ class ExplainabilityLLM:
             "You are explaining SHAP results for a predictive process monitoring model. "
             "Write one short paragraph in British English for a web interface. "
             "Keep it factual, readable, and non-technical where possible. "
-            "Mention the most influential events, whether they are recurrent or rare, "
-            "and what mean_abs_shap and occurrences_percent imply. "
+            "Mention the top-5 most influential events based only on mean_abs_shap. "
+            "Use mean_abs_shap as the only criterion to compare influence across events. "
+            "Ignore occurrences_percent and occurrences_total entirely. "
             "Do not invent facts, causes, or relationships that are not explicitly supported by the input. "
-            "Do not infer causal relationships, criticality, rarity, or importance from occurrence frequencies alone. "
-            "Occurrence statistics are provided only as descriptive contextual information. "
+            "Do not infer causal relationships or criticality from any frequency information. "
+            "When rendering event names, convert concatenated or multi-word forms into readable words with spaces, using sentence case. "
+            "Use first word initial uppercase and all following words lowercase (e.g., 'nursingtreatment' -> 'Nursing treatment'). "
             "When reporting numerical values from the SHAP summary, round them to 3 decimal places (e.g., 0.296 instead of 0.29607). "
             "Whenever you mention an event name or any value taken from the event log or SHAP summary, wrap it in single quotes. "
             "Return only the final paragraph text, with no preface or heading. "
@@ -85,7 +84,7 @@ class ExplainabilityLLM:
             f"Prediction type: {prediction_type}\n"
             f"Model: {model_name}\n"
             f"Explained cases: {explained_cases}\n\n"
-            "Top events from shap_summary.csv:\n"
+            "Top-5 events from shap_summary.csv (ranked by mean_abs_shap):\n"
             + "\n".join(rows_text)
         )
 
