@@ -70,3 +70,10 @@
  
  ## 2026-04-29
   -- Added integration with a local LLM via Ollama to generate automatic natural-language explanations for the SHAP global event summary.
+
+## 2026-05-13
+- Moved the LLM prompt text out of the source code into an external template file.
+  -- Created `web/prompts/shap_global_summary.txt` containing the prompt template with `str.format()` placeholders for run-time variables.
+  -- Added `directories.prompts` entry to `config.yml` to configure the prompts folder path.
+  -- Added `get_prompts_dir()` helper to `ConfigLoader.py` to resolve the absolute path.
+  -- `ExplainabilityLLM._build_prompt()` now loads and fills the template at runtime; the prompt can be edited without touching Python code.

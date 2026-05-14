@@ -21,11 +21,10 @@ We provide collaborative predictions for:
 - Process remaining time
 - Participant remaining time
 
-## SHAP Update (Work in progress)
+## SHAP Update
 
 The current SHAP implementation explains classification models through SHAP KernelExplainer.
-To keep runtime manageable, explanations are currently computed on a subset of cases (configurable),
-using a small background sample for the explainer.
+To keep runtime manageable, explanations can be computed on a subset of cases (configurable), using a small background sample for the explainer.
 
 For each explained model, the SHAP run generates:
 
@@ -96,6 +95,7 @@ The project is organized in the following directories:
    - Flask server implementation (`server.py` to be executed from ./)
    - Python modules for models, predictions, and auxiliary functions
    - ProcessTransformer integration
+   - `prompts/` — external plain-text templates for LLM prompts (e.g., `shap_global_summary.txt`); the directory path is configured via `config.yml` under `directories.prompts`
    - `static/` and `templates/` are Flask built-in directories for static resources and HTML templates
 
 3. **trazas/** (staging) - Stores the partial trace files uploaded through the web application for prediction processing.
