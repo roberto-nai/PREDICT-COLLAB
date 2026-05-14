@@ -46,7 +46,7 @@ SHAP results are available from the web interface and stored under:
 
 - Andrea Delgado
 - Daniel Calegari
-- Roberto Nai (roberto.nai@unito.it)
+- Roberto Nai 
 - Emilio Sulis
 
 
@@ -113,3 +113,7 @@ The project is organized in the following directories:
 Zaharah A. Bukhsh, Aaqib Saeed, & Remco M. Dijkman. (2021). ["ProcessTransformer: Predictive Business Process Monitoring with Transformer Network"](https://arxiv.org/abs/2104.00721). arXiv preprint arXiv:2104.00721   
 
 Delgado A., Calegari D., Espino C. & Ribero N. (2025).  ["Predictive process monitoring for collaborative business processes: concepts and application](https://link.springer.com/article/10.1007/s44257-025-00031-8)
+
+## Contacts
+
+For further information and project insights, please contact Roberto Nai (roberto.nai@unito.it).
